@@ -22,7 +22,6 @@ export const getalluser = async() => {
 };
 
 export const getuserbyid = async() => {
-    const user = await userrepository.getalluser();
     return {user : {
         id : 1,
         name : "john doe",
@@ -32,7 +31,6 @@ export const getuserbyid = async() => {
 };
 
 export const updateuser = async() => {
-    const user = await userrepository.updateuser();
         return {user : {
         id : 1,
         name : "john doe",
@@ -42,7 +40,6 @@ export const updateuser = async() => {
 };
 
 export const deleteuser = async() => {
-    const user = await userrepository.deleteuser();
         return {user : {
         id : 1,
         name : "john doe",

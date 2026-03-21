@@ -16,7 +16,7 @@ fastify.register(userRoutes, {
 const start = async () => {
   try {
     await fastify.listen({ port: 9000, host: '0.0.0.0' });
-    console.log(`Server is running at http://localhost:9000/api/v1/users/user`);
+    console.log(`Server is running at http://localhost:9000/api/v1/users`);
   } catch (err) {
     fastify.log.error(err); 
     process.exit(1);

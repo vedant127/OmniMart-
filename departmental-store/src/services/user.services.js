@@ -3,7 +3,7 @@ import * as userrepositories from "../repositories/user.repositories.js";
 export const createuser = async(userdata) => {
    //store the data in the database
    const response = await userrepositories.createuser(userdata);
-    return{};
+    return response;
 }
 
 export const getalluser = async() => {

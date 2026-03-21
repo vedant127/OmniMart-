@@ -17,7 +17,7 @@ export const createuser = async (request, reply) => {
 
 const responseData = await userservices.createuser(newUser);
 
-if (!responseData) {
+if (responseData) {
   return reply.status(201).send(responseData); // success response
 } else {
   return reply.status(500).send("Internal Server Error"); // handle error
@@ -38,14 +38,14 @@ export const getuserbyid = async (request , reply) => {
   const {userid} = request.params;
   const result = await userservices.getuserbyid(userid);
   if (result) {
-    return replay.status(200).send(result);
+    return reply.status(200).send(result);
   } else {
     return reply.status(500).send("internal server error");
   }
 }
   
 
-export const updateuser = async (Request , replay) => {
+export const updateuser = async (request, reply) => {
   const {userid} = request.params;
   const {name ,email , password } = request.body;
 
@@ -58,7 +58,7 @@ export const updateuser = async (Request , replay) => {
    
   const result = await userservices.updateuser(userid , updateuser);
   if (result) {
-    return replay.status(200).send(result);
+    return reply.status(200).send(result);
   } else {
     return reply.status(500).send("internal server error");
   }

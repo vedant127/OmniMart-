@@ -14,10 +14,10 @@ const userRoutes = async (fastify , Option) => {
             }
         }
     } , usercontroller.createuser);
-    fastify.get("/user" , usercontroller.createuser);
-    fastify.get("/user/userid" , usercontroller.getuserbyid);
-    fastify.put("/user/userid" , usercontroller.updateuser);
-    fastify.delete("/user/userid" , usercontroller.deleteuser);
+    fastify.get("/user" , usercontroller.getalluser);
+    fastify.get("/user/:userid" , usercontroller.getuserbyid);
+    fastify.put("/user/:userid" , usercontroller.updateuser);
+    fastify.delete("/user/:userid" , usercontroller.deleteuser);
     fastify.post("/user/login" , usercontroller.userlogin);
 };
 
