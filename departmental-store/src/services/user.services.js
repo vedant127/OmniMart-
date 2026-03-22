@@ -1,32 +1,52 @@
-import * as userrepositories from "../repositories/user.repositories.js";
+const userService = (userRepository) => ({
+    createuser: async (userData) => {
+        // store the data in the database
 
-export const createuser = async(userdata) => {
-   //store the data in the database
-   const response = await userrepositories.createuser(userdata);
-    return response;
-}
+        // hash password
+        const user = await userRepository.createuser(userData);
+        
+        // perform some business logic
+        // sending email, etc.
 
-export const getalluser = async() => {
-    const response = await userrepositories.getalluser();
-    return response;
-}
+        return user;
+    },
+    getalluser: async () => {
+        // pass the offset and limit as parameters
+        const users = await userRepository.getalluser();
 
-export const getuserbyid = async(userid) => {
-    const response = await userrepositories.getuserbyid(userid);
-    return response;
-};
+        // perform some business logic
+        // e.g. filtering, sorting, etc.
 
-export const updateuser = async(userid , userdata) => {
-    const response = await userrepositories.updateuser(userid , userdata);
-    return response;
-};
+        return users;
+    },
+    getuserbyid: async (userId) => {
+        const user = await userRepository.getuserbyid(userId);
 
-export const deleteuser = async(userid) => {
-    const response = await userrepositories.deleteuser(userid);
-    return response;
-};
+        // perform some business logic
+        // e.g. checking permissions, etc.
 
-export const userlogin = async(email) => {
-    const user = await userrepositories.finduserbyemail(email);
-    return user;
-}
+        return user;
+    },
+    updateuser: async (userId, userData) => {
+        const updatedUser = await userRepository.updateuser(userId, userData);
+
+        // perform some business logic
+        // e.g. validating data, etc.
+
+        return updatedUser;
+    },
+    deleteuser: async (userId) => {
+        const deletedUser = await userRepository.deleteuser(userId);
+
+        // perform some business logic
+        // e.g. logging, etc.
+
+        return deletedUser;
+    },
+    userlogin: async (email) => {
+        const user = await userRepository.finduserbyemail(email);
+        return user;
+    }
+});
+
+export default userService;

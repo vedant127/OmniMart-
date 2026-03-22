@@ -1,93 +1,93 @@
-import * as userservices from "../services/user.services.js";
-export const createuser = async (request, reply) => {
-  const { name, email, password } = request.body;
+const userController = (userService) => ({
 
+    createUser: async (request, reply) => {
+        const { name, email, password } = request.body;
 
+        // Simulate user creation logic
+        const newUser = {
+            name,
+            email,
+            password,
+        };
 
-  // Validate request body
-  // Simulate user creation logic  
-  const newUser = {
-    name,
-    email,
-    password
-  };
+        // perform some business logic
+        // handing over to another service
+        const responseData = await userService.createuser(newUser);
+        if (!responseData) {
+            reply.status(500).send({
+                message: "Internal Server Error",
+            });
+            return;
+            // success response
+        }
 
-  // Perform some business logic 
-  // Store the data in database
+        // handle error
 
-const responseData = await userservices.createuser(newUser);
+        // api layer (routes) => http layer (controller) => business logic layer (services) => data layer
+        reply.status(201).send(responseData);
+    },
 
-if (responseData) {
-  return reply.status(201).send(responseData); // success response
-} else {
-  return reply.status(500).send("Internal Server Error"); // handle error
-}
+    getAllUsers: async (request, reply) => {
+        const result = await userService.getalluser();
+        if (result) {
+            // success response
+        }
+        // handle error
+        reply.status(200).send(result);
+    },
 
-}
+    getUserById: async (request, reply) => {
+        const { userId } = request.params;
+        const result = await userService.getuserbyid(userId);
+        if (result) {
+            // success response
+        }
+        // handle error
+        reply.status(200).send(result);
+    },
 
-export const getalluser = async (request , reply) => {
-  const result = await userservices.getalluser();
-  if (result) {
-    return reply.status(200).send(result);
-  } else{
-    return reply.status(500).send("internal server errror");
-  }
-};
+    updateUser: async (request, reply) => {
+        const { userId } = request.params;
+        const { name, email, password } = request.body;
 
-export const getuserbyid = async (request , reply) => {
-  const {userid} = request.params;
-  const result = await userservices.getuserbyid(userid);
-  if (result) {
-    return reply.status(200).send(result);
-  } else {
-    return reply.status(500).send("internal server error");
-  }
-}
-  
+        // Validate request body
 
-export const updateuser = async (request, reply) => {
-  const {userid} = request.params;
-  const {name ,email , password } = request.body;
+        // Simulate user update logic
+        const updatedUser = {
+            id: userId,
+            name,
+            email,
+            password,
+        };
 
-  const updateuser = {
-    id : userid,
-    name,
-    email,
-    password,
-  };
-   
-  const result = await userservices.updateuser(userid , updateuser);
-  if (result) {
-    return reply.status(200).send(result);
-  } else {
-    return reply.status(500).send("internal server error");
-  }
-};
+        const result = await userService.updateuser(userId, updatedUser);
+        if (result) {
+            // success response
+        }
+        // handle error
+        reply.status(200).send(result);
+    },
 
-export const deleteuser = async (request , reply) => {
-  const { userid } = request.params;
-  const result = await userservices.deleteuser(userid);
-  if (result) {
-    return reply.status(200).send(result);
-  } else {
-    return reply.status(500).send("internal server error");
-  }
-};
+    deleteUser: async (request, reply) => {
+        const { userId } = request.params;
+        const result = await userService.deleteuser(userId);
+        if (result) {
+            // success response
+        }
+        // handle error
+        reply.status(200).send(result);
+    },
 
+    userLogin: async (request, reply) => {
+        const { email, password } = request.body;
+        const responseData = await userService.userlogin(email);
+        if (responseData) {
+            reply.status(200).send(responseData);
+        } else {
+            reply.status(500).send({ message: "Internal Server Error" });
+        }
+    },
 
-export const userlogin = async (request , reply) => {
-  const { email , password} = request.body;
+});
 
-  const user = {
-    id: Date.now(),
-    email,
-    password
-  };
-
-  const responseData = await userservices.userlogin(user);
-  if (responseData) {
-    reply.status(200).send(responseData);
-  } else{
-    return reply.status(500).send("internal server error");
-  }
-};
+export default userController;
