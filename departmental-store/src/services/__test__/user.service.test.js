@@ -57,18 +57,25 @@ describe("user service" , () => {
 
     describe("createUser", () => {
         test("should successfull create a new user", async () => {
-            const mockUserResponse = {
-                id: 1,
+            const input = {
                 name: "John Doe",
                 email: "test@test.com",
+                password: "password123",
                 role: "user",
-            };
+            }
+
+            const mockUserResponse = {
+                id: 1,
+                name: input.name,
+                email: input.email,
+                role: input.role,
+            }
 
             mockuserrepo.createuser.mockResolvedValue(mockUserResponse);
-
-            const result = await userservice.createuser(mockUserResponse);
-            expect(result).toEqual(mockUserResponse);
-            expect(mockuserrepo.createuser).toHaveBeenCalledTimes(1);
+            
+            const response = await userservice.createuser(input);
+            expect(response).toEqual(mockUserResponse);
+            expect(mockuserrepo.createuser).toHaveBeenCalledWith(input);
         });
     });
 
