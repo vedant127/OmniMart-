@@ -1,4 +1,4 @@
-const userService = (userRepository) => ({
+const userService = ({userRepository , auth , mailer}) => ({
     createuser: async (userData) => {
         // store the data in the database
 

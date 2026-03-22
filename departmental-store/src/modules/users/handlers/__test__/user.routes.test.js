@@ -1,4 +1,4 @@
-import userController from "../../controller/user.controller.js";
+import userController from "../../../../controller/user.controller.js";
 import UserRoutes from "../user.routes.js";
 import { userRegisterSchema } from "../schema/userRegister.schema.js";
 
