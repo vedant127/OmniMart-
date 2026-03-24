@@ -1,9 +1,24 @@
+import { createUserEntity }  from "../domain/user.entity.js";
 const userService = ({userRepository , auth , mailer}) => ({
-    createuser: async (userData) => {
+    createuser: async (userData) => {    
+        
+        const hashpassword = await auth.hashpassword(userData.password);
+
+        // create user entity 
+        const UserEntity = createUserEntity({
+            ...userData,
+             hashpassword,
+        });
+           
         // store the data in the database
 
         // hash password
-        const user = await userRepository.createuser(userData);
+        const user = await userRepository.createuser({
+            name: UserEntity.getName(),
+            email: UserEntity.getEmail(),
+            password: UserEntity.getPassword(),
+            role: UserEntity.getRole(),
+        });
         
         // perform some business logic
         // sending email, etc.
