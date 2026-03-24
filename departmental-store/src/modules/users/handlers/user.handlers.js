@@ -99,18 +99,22 @@ export const registeruserhandler = async (fastify , service) =>{
       }
     );
 
-   fastify.post(
-     "/users/logout",
-     { preHandler: authGuard },
-     async (request, reply) => {
-       try {
-           const user = await service.userlogout(request.user.id);
-           reply.status(200).send(user);
-       } catch (error) {
-           reply.status(500).send(error);
-       }
-     }
-   );
+  //reset passwprd
+  fastify.post(
+    "/api/users/resetpassword",
+    async (request, reply) => {
+      try {
+        const email = request.body.email;
+        if (!email) {
+            return reply.status(400).send({message: "email is required"});
+        }
+        const result = await service.resetpassword(email);
+        reply.status(200).send(result);
+      } catch (error) {
+        reply.status(500).send(error);
+      }
+    }
+  );
 
   // add Address
   fastify.post(

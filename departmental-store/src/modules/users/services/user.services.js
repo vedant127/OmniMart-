@@ -140,6 +140,68 @@ const userService = ({userRepository , auth , mailer}) => ({
 
         return{ id: userId};
     },
+
+    resetpassword: async (email) => {
+
+        // genrate new password
+
+        const newPassword = Math.random().toString(12).slice(-8);
+
+        const hashpassword = await auth.hashpassword(newPassword);
+
+        //updte new password
+
+        const updatedUser = await userRepository.getuserbyemail(email);
+        if (!user) {
+            throw new console.error("user not found with the provided email");
+         }
+
+         await userRepository.updatedUser(user.id, {
+            hashpassword
+         });
+
+        //send the new password to the user's email
+
+        await mailer.sendregistrationemail(
+            user.email,
+            user.name,
+            `welcome ${user.name} ! your account has been created successfully`
+        );
+        return{ Message: "a new password is send to your registered email "};
+    },
+
+    refreshToken: async (token) => {
+
+        const decodedToken = auth.verifyRefreshToken(token);
+        if(!decodedToken){
+            throw new Error("Invalid refresh token");
+        }
+
+        const user = await userRepository.getuserbyid(decodedToken.id);
+        if(!user){
+            throw new Error("User not found");
+        }
+
+        const accessToken = auth.generateToken({
+            id: user.id,
+            email: user.email,
+            role: user.role,
+        }, {
+            expiresIn: "15m"
+        });
+
+        const refreshToken = auth.signRefreshToken({
+            id: user.getId(),
+            email: user.getEmail(),
+            role: user.getRole(),
+        }, {
+            expiresIn: "7d"
+        });
+
+        return { accessToken, refreshToken };
+
+    },
+
 });
 
 export default userService;
