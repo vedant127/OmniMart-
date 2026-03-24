@@ -1,7 +1,8 @@
+import { hash } from "bcryptjs";
 import { createUserEntity }  from "../domain/user.entity.js";
 const userService = ({userRepository , auth , mailer}) => ({
     
-    userlogin: async (email) => {
+    userlogin: async (email , password) => {
         const rawuser = await userRepository.getuserbyemail(email);
         if(!rawuser){
             throw new Error("User not found");
@@ -15,7 +16,31 @@ const userService = ({userRepository , auth , mailer}) => ({
             role: rawuser.role,
         });
 
-        return user;
+        const valid = await user.checkPassword(password , auth);
+        if(!valid){
+            throw new Error("Invalid password");
+        }
+
+        //access token
+
+         const accessToken = auth.generateToken({
+            id: user.getId(),
+            email: user.getEmail(),
+            role: user.getRole(),
+        }, {
+            expiresIn: "15m"
+        });
+
+        const refreshToken = auth.signRefreshToken({
+            id: user.getId(),
+            email: user.getEmail(),
+            role: user.getRole(),
+        }, {
+            expiresIn: "7d"
+        });
+
+
+        return user , accessToken , refreshToken;
     },
     createuser: async (userData) => {    
         
@@ -57,20 +82,55 @@ const userService = ({userRepository , auth , mailer}) => ({
         return users;
     },
     getuserbyid: async (userId) => {
-        const user = await userRepository.getuserbyid(userId);
-
-        // perform some business logic
-        // e.g. checking permissions, etc.
+        const rawuser = await userRepository.getuserbyid(userId);
+        const user = genrateuserentity({
+            id: rawuser.id,
+            name: rawuser.name,
+            email: rawuser.email,
+            hashpassword: rawuser.password,
+            role: rawuser.role,
+        })
 
         return user;
     },
     updateuser: async (userId, userData) => {
-        const updatedUser = await userRepository.updateuser(userId, userData);
+
+        const existinguser = await userRepository.getuserbyid(userId);
+        if(!existinguser){
+            throw new Error("User not found");
+        }
+
+       const hashpassword = userData.password
+       ? await auth.hashpassword(userData.password)
+       : existinguser.password;
+
+
+       const UserEntity = createUserEntity({
+        id: existinguser.id,
+        name: userData.name || existinguser.name,
+        email: userData.email || existinguser.email,
+        hashpassword: hashpassword,
+        role: userData.role || existinguser.role,
+       })
+
+       const updatedUserData = {
+        name: UserEntity.getName(),
+        email: UserEntity.getEmail(),
+        password: UserEntity.getPassword(),
+        role: UserEntity.getRole(),
+       }
+
+        const updatedUser = await userRepository.updateuser(userId , updatedUserData);
 
         // perform some business logic
         // e.g. validating data, etc.
 
-        return updatedUser;
+        return {
+            id: updatedUser.id,
+            name: updatedUser.getname(),
+            email: updatedUser.getEmail(),
+            role: updatedUser.getRole(),
+        };
     },
     deleteuser: async (userId) => {
         const deletedUser = await userRepository.deleteuser(userId);
@@ -78,7 +138,7 @@ const userService = ({userRepository , auth , mailer}) => ({
         // perform some business logic
         // e.g. logging, etc.
 
-        return deletedUser;
+        return{ id: userId};
     },
 });
 

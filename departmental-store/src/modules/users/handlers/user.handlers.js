@@ -13,61 +13,180 @@
 
 // export default userRoutes;
 
+import { authGuard } from "../shared/auth.middleware.js";
+
 
 export const registeruserhandler = async (fastify , service) =>{
-    fastify.post("/users", async (request, reply) => {
+    // register user
+    fastify.post(
+      "/api/users",
+      async (request, reply) => {
         try {
             const user = await service.createuser(request.body);
-            return reply.code(201).send(user);
+            reply.status(201).send(user);
         } catch (error) {
-            return reply.code(500).send(error);
+            reply.status(500).send(error);
         }
-    });
+      }
+    );
 
-    
-    fastify.get("/users", async (request, reply) => {
+    // get all users
+    fastify.get(
+      "/api/users",
+      { preHandler: authGuard },
+      async (request, reply) => {
         try {
             const users = await service.getalluser();
-            return reply.code(200).send(users);
+            reply.status(200).send(users);
         } catch (error) {
-            return reply.code(500).send(error);
+            reply.status(500).send(error);
         }
-    });
+      }
+    );
 
-
-    fastify.get("/users/:userId", async (request, reply) => {
+    // get user by id
+    fastify.get(
+      "/api/users/:userId",
+      { preHandler: authGuard },
+      async (request, reply) => {
         try {
             const user = await service.getuserbyid(request.params.userId);
-            return reply.code(200).send(user);
+            reply.status(200).send(user);
         } catch (error) {
-            return reply.code(500).send(error);
+            reply.status(500).send(error);
         }
-    });
+      }
+    );
 
-    fastify.patch("/users/:userId", async (request, reply) => {
+    // update user
+    fastify.patch(
+      "/api/users/:userId",
+      { preHandler: authGuard },
+      async (request, reply) => {
         try {
             const updatedUser = await service.updateuser(request.params.userId, request.body);
-            return reply.code(200).send(updatedUser);
+            reply.status(200).send(updatedUser);
         } catch (error) {
-            return reply.code(500).send(error);
+            reply.status(500).send(error);
         }
-    });
+      }
+    );
 
-    fastify.delete("/users/:userId", async (request, reply) => {
+    // delete user
+    fastify.delete(
+      "/api/users/:userId",
+      { preHandler: authGuard },
+      async (request, reply) => {
         try {
             const deletedUser = await service.deleteuser(request.params.userId);
-            return reply.code(200).send(deletedUser);
+            reply.status(200).send(deletedUser);
         } catch (error) {
-            return reply.code(500).send(error);
+            reply.status(500).send(error);
         }
-    });
+      }
+    );
 
-    fastify.post("/users/login", async (request, reply) => {
+    // login
+    fastify.post(
+      "/api/users/login",
+      async (request, reply) => {
         try {
-            const user = await service.userlogin(request.body.email);
-            return reply.code(200).send(user);
+            const tokens = await service.userlogin(request.body.email, request.body.password);
+            reply.status(200).send(tokens);
         } catch (error) {
-            return reply.code(500).send(error);
+            reply.status(500).send(error);
         }
-    });
-} ;
+      }
+    );
+
+   fastify.post(
+     "/users/logout",
+     { preHandler: authGuard },
+     async (request, reply) => {
+       try {
+           const user = await service.userlogout(request.user.id);
+           reply.status(200).send(user);
+       } catch (error) {
+           reply.status(500).send(error);
+       }
+     }
+   );
+
+  // add Address
+  fastify.post(
+    "/api/users/address",
+    { preHandler: authGuard },
+    async (request, reply) => {
+      try {
+        const address = await service.addUserAddress(
+          request.user.id,
+          request.body
+        );
+        reply.status(201).send(address);
+      } catch (error) {
+        reply.status(500).send(error);
+      }
+    }
+  );
+
+   // get address 
+   fastify.get(
+     "/api/users/address",
+     { preHandler: authGuard },
+     async (request, reply) => {
+       try {
+           const address = await service.getUserAddress(request.user.id);
+           reply.status(200).send(address);
+       } catch (error) {
+           reply.status(500).send(error);
+       }
+     }
+   );
+ 
+   // update address
+   fastify.patch(
+     "/api/users/address",
+     { preHandler: authGuard },
+     async (request, reply) => {
+       try {
+           const address = await service.updateUserAddress(
+             request.user.id,
+             request.body
+           );
+           reply.status(200).send(address);
+       } catch (error) {
+           reply.status(500).send(error);
+       }
+     }
+   );
+
+   // delete address
+   fastify.delete(
+     "/api/users/address",
+     { preHandler: authGuard },
+     async (request, reply) => {
+       try {
+           const address = await service.deleteUserAddress(
+             request.user.id,
+             request.body
+           );
+           reply.status(200).send(address);
+       } catch (error) {
+           reply.status(500).send(error);
+       }
+     }
+   );
+
+   // refresh token
+   fastify.post(
+     "/users/refreshtoken",
+     async (request, reply) => {
+       try {
+           const user = await service.userrefreshtoken(request.body.refreshToken || request.body.email);
+           reply.status(200).send(user);
+       } catch (error) {
+           reply.status(500).send(error);
+       }
+     }
+   );
+};
