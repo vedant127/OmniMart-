@@ -1,5 +1,22 @@
 import { createUserEntity }  from "../domain/user.entity.js";
 const userService = ({userRepository , auth , mailer}) => ({
+    
+    userlogin: async (email) => {
+        const rawuser = await userRepository.getuserbyemail(email);
+        if(!rawuser){
+            throw new Error("User not found");
+        }
+
+        const user = createUserEntity({
+            id: rawuser.id,
+            name: rawuser.name,
+            email: rawuser.email,
+            hashpassword: rawuser.password,
+            role: rawuser.role,
+        });
+
+        return user;
+    },
     createuser: async (userData) => {    
         
         const hashpassword = await auth.hashpassword(userData.password);
@@ -22,6 +39,11 @@ const userService = ({userRepository , auth , mailer}) => ({
         
         // perform some business logic
         // sending email, etc.
+        await mailer.sendregistrationemail(
+            user.email,
+            user.name,
+            `welcome ${user.name} ! your account has been created successfully`
+        );
 
         return user;
     },
@@ -58,10 +80,6 @@ const userService = ({userRepository , auth , mailer}) => ({
 
         return deletedUser;
     },
-    userlogin: async (email) => {
-        const user = await userRepository.finduserbyemail(email);
-        return user;
-    }
 });
 
 export default userService;
