@@ -1,6 +1,7 @@
 import Fastify from "fastify"; 
 import { registerusermodule } from "./modules/users/index.js";
 import { registerCatalogModule } from "./modules/catalog/index.js";
+import { registerShoppingModule } from "./modules/shopping/index.js";
 
 const fastify = Fastify({
   logger: true,
@@ -15,6 +16,7 @@ const start = async () => {
     await registerusermodule(fastify);
 
     await registerCatalogModule(fastify);
+    await registerShoppingModule(fastify);
 
     await fastify.listen({ port: 9000, host: "0.0.0.0" });
     fastify.log.info(`Server is running at http://localhost:9000/api/v1/users/user`);
