@@ -1,15 +1,16 @@
-import { auth } from "./auth";
+import { auth } from "./auth.js";
 
-
-export const authGuard = (req , replay) => {
-    const token = req.headers.authorization;
+export const authGuard = async (req , replay) => {
+    let token = req.headers.authorization;
     if(!token){
-        replay.status(401).send({ message: "Unauthorized"});
+        return replay.status(401).send({ message: "Unauthorized"});
     }
-    const user = auth.verifyToken(token);
+    if (token.startsWith("Bearer ")) {
+        token = token.slice(7);
+    }
+    const user = await auth.verifyToken(token);
     if(!user){
-        replay.status(401).send({ message: "Unauthorized"});
+        return replay.status(401).send({ message: "Unauthorized"});
     }
     req.user = user;
-    next();
 }

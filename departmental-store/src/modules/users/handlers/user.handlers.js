@@ -13,7 +13,7 @@
 
 // export default userRoutes;
 
-import { authGuard } from "../shared/auth.middleware.js";
+import { authGuard } from "../../shared/auth.middleware.js";
 
 
 export const registeruserhandler = async (fastify , service) =>{
