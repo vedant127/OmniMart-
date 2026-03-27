@@ -10,7 +10,13 @@ export const createCart = async ({userId, productId, variantId, quantity}) => {
 };
 
 export const getCartByUserId = async (userId) => {
-    return await query("SELECT * FROM carts WHERE user_id = $1", [userId]);
+    return await query(
+        `SELECT c.id, c.user_id, c.product_id, c.quantity, p.name, p.price, p.emoji, p.image_url 
+         FROM carts c 
+         JOIN products p ON c.product_id = p.id 
+         WHERE c.user_id = $1`, 
+        [userId]
+    );
 };
 
 export const updateCart = async (id, {quantity}) => {
@@ -18,6 +24,11 @@ export const updateCart = async (id, {quantity}) => {
         "UPDATE carts SET quantity = $1 WHERE id = $2 RETURNING *",
         [quantity, id]
     );
+    return res[0];
+};
+
+export const deleteCart = async (id) => {
+    const res = await query("DELETE FROM carts WHERE id = $1 RETURNING *", [id]);
     return res[0];
 };
 

@@ -22,10 +22,16 @@ export const registeruserhandler = async (fastify , service) =>{
       "/api/v1/users/register",
       async (request, reply) => {
         try {
-            const user = await service.createuser(request.body);
+            const { name, email, password, role } = request.body;
+            if (!email || !password || !name) {
+                return reply.status(400).send({ error: "Name, email, and password are required" });
+            }
+            const user = await service.createuser({ name, email, password, role: role || "user" });
             reply.status(201).send(user);
         } catch (error) {
-            reply.status(500).send(error);
+            console.error("Registration Error:", error);
+            const status = error.statusCode || 500;
+            reply.status(status).send({ error: error.message || "Internal server error" });
         }
       }
     );
@@ -101,7 +107,7 @@ export const registeruserhandler = async (fastify , service) =>{
 
   //reset passwprd
   fastify.post(
-    "/api/users/resetpassword",
+    "/api/v1/users/resetpassword",
     async (request, reply) => {
       try {
         const email = request.body.email;
@@ -118,7 +124,7 @@ export const registeruserhandler = async (fastify , service) =>{
 
   // add Address
   fastify.post(
-    "/api/users/address",
+    "/api/v1/users/address",
     { preHandler: authGuard },
     async (request, reply) => {
       try {
@@ -135,7 +141,7 @@ export const registeruserhandler = async (fastify , service) =>{
 
    // get address 
    fastify.get(
-     "/api/users/address",
+     "/api/v1/users/address",
      { preHandler: authGuard },
      async (request, reply) => {
        try {
@@ -149,7 +155,7 @@ export const registeruserhandler = async (fastify , service) =>{
  
    // update address
    fastify.patch(
-     "/api/users/address",
+     "/api/v1/users/address",
      { preHandler: authGuard },
      async (request, reply) => {
        try {
@@ -166,7 +172,7 @@ export const registeruserhandler = async (fastify , service) =>{
 
    // delete address
    fastify.delete(
-     "/api/users/address",
+     "/api/v1/users/address",
      { preHandler: authGuard },
      async (request, reply) => {
        try {
@@ -183,7 +189,7 @@ export const registeruserhandler = async (fastify , service) =>{
 
    // refresh token
    fastify.post(
-     "/users/refreshtoken",
+     "/api/v1/users/refreshtoken",
      async (request, reply) => {
        try {
            const user = await service.userrefreshtoken(request.body.refreshToken || request.body.email);

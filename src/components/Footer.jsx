@@ -1,84 +1,106 @@
-import { Link } from 'react-router-dom';
-import { Leaf, Phone, Mail, MapPin, Share2, Heart, Globe } from 'lucide-react';
+import { Link } from "react-router-dom";
 
 const Footer = () => (
-  <footer style={{ backgroundColor: '#2D5A27' }} className="text-white mt-16 pt-12 pb-6">
-    <div className="max-w-7xl mx-auto px-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
+  <footer style={{ backgroundColor: "var(--primary)", color: "var(--primary-foreground)" }}>
+    <div className="container mx-auto px-4 py-12">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {/* Brand */}
-        <div>
-          <div className="flex items-center gap-2 mb-4">
-            <div className="bg-white w-9 h-9 rounded-full flex items-center justify-center">
-              <Leaf size={20} style={{ color: '#2D5A27' }} />
-            </div>
-            <span className="text-xl font-bold">
-              <span style={{ color: '#ff8a80' }}>Fresh</span>Mart
-            </span>
-          </div>
-          <p className="text-green-200 text-sm leading-relaxed">
+        <div className="space-y-4">
+          <h3 className="text-xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
+            🍎 FreshCart
+          </h3>
+          <p className="text-sm leading-relaxed" style={{ opacity: 0.8, fontFamily: "'DM Sans', sans-serif" }}>
             Your one-stop destination for the freshest organic produce. Farm to doorstep, every single day. 🌱
           </p>
-          <div className="flex gap-3 mt-4">
-            {[Share2, Heart, Globe].map((Icon, i) => (
-              <div key={i} className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 cursor-pointer transition">
-                <Icon size={16} />
-              </div>
+          <div className="flex gap-3">
+            {["f", "tw", "ig", "yt"].map((s, i) => (
+              <a
+                key={i}
+                href="#"
+                className="h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold transition-colors hover:opacity-80"
+                style={{ backgroundColor: "rgba(255,255,255,0.1)" }}
+              >
+                {s === "f" ? "📘" : s === "tw" ? "🐦" : s === "ig" ? "📸" : "▶️"}
+              </a>
             ))}
           </div>
         </div>
 
-        {/* Categories */}
-        <div>
-          <h4 className="font-bold text-base mb-4">Categories</h4>
-          <ul className="space-y-2 text-sm text-green-200">
-            {['Fresh Fruits', 'Vegetables', 'Dairy & Eggs', 'Bakery Items', 'Beverages', 'Snacks & Munchies'].map((item) => (
-              <li key={item}>
-                <Link to="/products" className="hover:text-white transition-colors">{item}</Link>
+        {/* Shop */}
+        <div className="space-y-4">
+          <h4
+            className="font-semibold text-sm uppercase tracking-wider"
+            style={{ fontFamily: "'Playfair Display', serif" }}
+          >
+            Shop
+          </h4>
+          <ul className="space-y-2 text-sm" style={{ opacity: 0.8, fontFamily: "'DM Sans', sans-serif" }}>
+            {["Fresh Fruits", "Best Sellers", "New Arrivals", "Dry Fruits", "Organic Juice"].map((link) => (
+              <li key={link}>
+                <Link to="/products" className="hover:opacity-100 transition-opacity">{link}</Link>
               </li>
             ))}
           </ul>
         </div>
 
-        {/* My Account */}
-        <div>
-          <h4 className="font-bold text-base mb-4">My Account</h4>
-          <ul className="space-y-2 text-sm text-green-200">
-            {[['My Profile', '/profile'], ['My Orders', '/orders'], ['Cart', '/cart'], ['Login', '/login'], ['Register', '/register']].map(([label, path]) => (
-              <li key={label}>
-                <Link to={path} className="hover:text-white transition-colors">{label}</Link>
+        {/* Help */}
+        <div className="space-y-4">
+          <h4
+            className="font-semibold text-sm uppercase tracking-wider"
+            style={{ fontFamily: "'Playfair Display', serif" }}
+          >
+            Help
+          </h4>
+          <ul className="space-y-2 text-sm" style={{ opacity: 0.8, fontFamily: "'DM Sans', sans-serif" }}>
+            {["Live Chat", "Help Center", "FAQ", "Shopping Guide", "Track Order"].map((link) => (
+              <li key={link}>
+                <a href="#" className="hover:opacity-100 transition-opacity">{link}</a>
               </li>
             ))}
           </ul>
         </div>
 
-        {/* Contact & Newsletter */}
-        <div>
-          <h4 className="font-bold text-base mb-4">Contact Us</h4>
-          <div className="space-y-2 text-sm text-green-200 mb-5">
-            <div className="flex items-center gap-2"><Phone size={14} /><span>+91 98765 43210</span></div>
-            <div className="flex items-center gap-2"><Mail size={14} /><span>hello@freshmart.in</span></div>
-            <div className="flex items-center gap-2"><MapPin size={14} /><span>Mumbai, Maharashtra</span></div>
-          </div>
-          <h4 className="font-bold text-sm mb-2">Newsletter</h4>
-          <div className="flex">
-            <input
-              type="email"
-              placeholder="Your email..."
-              className="flex-1 text-sm bg-white/10 border border-white/20 rounded-l-full px-4 py-2 placeholder-green-300 focus:outline-none focus:bg-white/15"
-            />
-            <button style={{ backgroundColor: '#C62828' }} className="px-4 py-2 rounded-r-full text-sm font-semibold hover:opacity-90 transition">
-              Subscribe
-            </button>
-          </div>
+        {/* Information */}
+        <div className="space-y-4">
+          <h4
+            className="font-semibold text-sm uppercase tracking-wider"
+            style={{ fontFamily: "'Playfair Display', serif" }}
+          >
+            Information
+          </h4>
+          <ul className="space-y-2 text-sm" style={{ opacity: 0.8, fontFamily: "'DM Sans', sans-serif" }}>
+            {["About Us", "Contact", "Privacy Policy", "Terms & Conditions", "Return Policy"].map((link) => (
+              <li key={link}>
+                <Link to={link === "About Us" ? "/about" : link === "Contact" ? "/contact" : "#"} className="hover:opacity-100 transition-opacity">
+                  {link}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
 
-      <hr className="border-white/20 mb-5" />
-      <div className="flex flex-col md:flex-row items-center justify-between text-xs text-green-300 gap-2">
-        <p>© 2024 FreshMart. All rights reserved.</p>
-        <div className="flex gap-4">
-          <span className="hover:text-white cursor-pointer">Privacy Policy</span>
-          <span className="hover:text-white cursor-pointer">Terms of Service</span>
+      {/* Bottom */}
+      <div
+        className="mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4"
+        style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}
+      >
+        <p className="text-xs" style={{ opacity: 0.6, fontFamily: "'DM Sans', sans-serif" }}>
+          © 2026 FreshCart. All rights reserved.
+        </p>
+        <div className="flex items-center gap-4">
+          <span className="text-xs" style={{ opacity: 0.6 }}>Payment Methods:</span>
+          <div className="flex gap-2 text-xs">
+            {["Visa", "Mastercard", "UPI"].map((p) => (
+              <span
+                key={p}
+                className="px-2 py-1 rounded"
+                style={{ backgroundColor: "rgba(255,255,255,0.1)", fontFamily: "'DM Sans', sans-serif" }}
+              >
+                {p}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
     </div>

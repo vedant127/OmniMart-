@@ -1,4 +1,3 @@
-
 import * as userRepository from "./repositories/user.repositories.js";
 import userService from "./services/user.services.js";
 import { auth } from "../shared/auth.js";
@@ -14,7 +13,7 @@ export const registerusermodule = async (fastify) => {
         mailer,
     });
 
-    registeruserhandler(fastify , userServiceInstance);
+    await registeruserhandler(fastify , userServiceInstance);
 };
 
 export default registerusermodule;

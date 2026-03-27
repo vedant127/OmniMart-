@@ -26,6 +26,10 @@ const shoppingService = ({ shoppingRepository }) => ({
         return await shoppingRepository.updateCart(id, cartData);
     },
 
+    deleteCart: async (id) => {
+        return await shoppingRepository.deleteCart(id);
+    },
+
     // -- Orders --
     createOrder: async (orderData) => {
         const orderEntity = createOrderEntity(orderData);

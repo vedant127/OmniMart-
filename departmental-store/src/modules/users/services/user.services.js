@@ -45,6 +45,14 @@ const userService = ({ userRepository, auth, mailer }) => ({
 
     // ✅ REGISTER
     createuser: async (userData) => {
+        // Check if user already exists
+        const existingUser = await userRepository.finduserbyemail(userData.email);
+        if (existingUser) {
+            const error = new Error("User with this email already exists");
+            error.statusCode = 400;
+            throw error;
+        }
+
         const hashpassword = await auth.hashPassword(userData.password);
 
         const UserEntity = createUserEntity({
@@ -126,7 +134,7 @@ const userService = ({ userRepository, auth, mailer }) => ({
     },
 
     // ✅ REFRESH TOKEN
-    refreshToken: async (token) => {
+    userrefreshtoken: async (token) => {
         const decodedToken = await auth.verifyrefreshtoken(token);
         if (!decodedToken) {
             throw new Error("Invalid refresh token");
@@ -147,6 +155,23 @@ const userService = ({ userRepository, auth, mailer }) => ({
         const refreshToken = await auth.signrefreshtoken(payload);
 
         return { accessToken, refreshToken };
+    },
+
+    // ✅ ADDRESSES
+    addUserAddress: async (userId, addressData) => {
+        return await userRepository.addUserAddress(userId, addressData);
+    },
+
+    getUserAddress: async (userId) => {
+        return await userRepository.getUserAddress(userId);
+    },
+
+    updateUserAddress: async (userId, addressData) => {
+        return await userRepository.updateUserAddress(userId, addressData);
+    },
+
+    deleteUserAddress: async (userId, addressData) => {
+        return await userRepository.deleteUserAddress(userId, addressData.id);
     },
 });
 

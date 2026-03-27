@@ -10,7 +10,11 @@ export const createProduct = async ({name, description, price, categoryId}) => {
 };
 
 export const getAllProducts = async () => {
-    const res = await query("SELECT * FROM products");
+    const res = await query(`
+        SELECT p.*, c.name as category_name 
+        FROM products p 
+        LEFT JOIN categories c ON p.category_id = c.id
+    `);
     return res;
 };
 

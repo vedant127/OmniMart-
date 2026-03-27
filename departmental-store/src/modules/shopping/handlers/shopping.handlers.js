@@ -32,6 +32,15 @@ export const registerShoppingHandler = async (fastify, service) => {
         }
     });
 
+    fastify.delete("/api/v1/shopping/cart/:id", { preHandler: authGuard }, async (request, reply) => {
+        try {
+            const cartItem = await service.deleteCart(request.params.id);
+            reply.status(200).send(cartItem);
+        } catch (error) {
+            reply.status(500).send({ error: error.message });
+        }
+    });
+
     // --- ORDERS ---
     fastify.post("/api/v1/shopping/orders", { preHandler: authGuard }, async (request, reply) => {
         try {

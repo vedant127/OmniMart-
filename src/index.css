@@ -1,12 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
-  --primary-green: #2D5A27;
-  --primary-red: #C62828;
-  --light-green-bg: #E8F5E9;
-  --accent-green: #4CAF50;
-  --text-dark: #1a1a1a;
-  --text-muted: #6b7280;
+  /* Color tokens matching organic-fresh-designs */
+  --organic-green: #2C5F1E;
+  --organic-green-light: #EFF5EC;
+  --organic-red: #C0392B;
+  --organic-brown: #4A3728;
+  --organic-olive: #8B9A2E;
+  --organic-sage: #A8B89A;
+  --organic-cream: #FAF8F3;
+  --organic-dark: #0A1A06;
+
+  --background: #FFFFFF;
+  --foreground: #0A1A06;
+  --card: #FFFFFF;
+  --muted: #E4EEE0;
+  --muted-foreground: #5A6E52;
+  --primary: #2C5F1E;
+  --primary-foreground: #FFFFFF;
+  --accent: #C0392B;
+  --accent-foreground: #FFFFFF;
+  --border: #C8DCC0;
+
+  --radius: 0.75rem;
+  --shadow-card: 0 4px 20px -4px rgba(10, 26, 6, 0.08);
+  --shadow-hover: 0 8px 30px -4px rgba(10, 26, 6, 0.12);
 }
 
 * {
@@ -16,23 +35,26 @@
 }
 
 body {
-  font-family: 'Outfit', sans-serif;
-  color: var(--text-dark);
-  background: #fff;
+  font-family: 'DM Sans', sans-serif;
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', serif;
 }
 
 html {
   scroll-behavior: smooth;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--primary-green);
-  border-radius: 3px;
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--muted); }
+::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--organic-green), var(--organic-olive));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Leaf, Check } from 'lucide-react';
+import { Eye, EyeOff, ShoppingBag, CheckCircle2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { registerUser } from '../services/api';
+import { motion } from 'framer-motion';
 
 const RegisterPage = () => {
   const [form, setForm] = useState({ name: '', email: '', password: '', role: 'user' });
@@ -25,7 +26,7 @@ const RegisterPage = () => {
     setLoading(true);
     try {
       await registerUser(form);
-      toast.success('Account created! Please login 🎉');
+      toast.success('Account created! Welcome to the family 🌿');
       navigate('/login');
     } catch (err) {
       const msg = err.response?.data?.message || 'Registration failed';
@@ -35,122 +36,185 @@ const RegisterPage = () => {
     }
   };
 
-  const PERKS = ['Free delivery on first order', '100% organic produce', 'Exclusive member discounts', '24/7 customer support'];
+  const PERKS = [
+    'Direct from organic farms',
+    'Customized fresh bundles',
+    'Exclusive early-bird deals',
+    'Eco-friendly packaging',
+  ];
+
+  const inputStyle = {
+    width: '100%',
+    padding: '12px 16px',
+    borderRadius: 'var(--radius)',
+    border: '1px solid var(--border)',
+    backgroundColor: '#fff',
+    fontSize: '14px',
+    fontFamily: "'DM Sans', sans-serif",
+    outline: 'none',
+    transition: 'border-color 0.2s',
+  };
 
   return (
-    <div className="min-h-screen flex" style={{ backgroundColor: '#E8F5E9' }}>
+    <div className="min-h-screen flex" style={{ backgroundColor: 'var(--background)' }}>
       {/* Left Panel */}
-      <div style={{ backgroundColor: '#2D5A27' }} className="hidden md:flex flex-col justify-center items-center w-1/2 p-12 text-white">
-        <div className="text-center">
-          <div className="text-8xl mb-6">🛒</div>
-          <h2 className="text-3xl font-extrabold mb-3">Join FreshMart!</h2>
-          <p className="text-green-200 text-base max-w-sm leading-relaxed">
-            Create your account and enjoy exclusive benefits — fresh produce, great deals, fast delivery!
-          </p>
-          <ul className="mt-8 space-y-3 text-left">
-            {PERKS.map((perk) => (
-              <li key={perk} className="flex items-center gap-3">
-                <div style={{ backgroundColor: '#C62828' }} className="w-5 h-5 rounded-full flex items-center justify-center shrink-0">
-                  <Check size={12} />
-                </div>
-                <span className="text-sm text-green-100">{perk}</span>
-              </li>
+      <div
+        className="hidden md:flex flex-col justify-center items-center w-1/2 p-12 text-white relative overflow-hidden"
+        style={{ backgroundColor: 'var(--primary)' }}
+      >
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
+          <div className="grid grid-cols-4 gap-8 p-8">
+            {Array.from({ length: 16 }).map((_, i) => (
+              <span key={i} className="text-6xl">☘️</span>
             ))}
-          </ul>
+          </div>
         </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center relative z-10"
+        >
+          <div className="text-8xl mb-6 drop-shadow-lg">🌱</div>
+          <h2 className="text-4xl font-bold mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+            Join the Green Side
+          </h2>
+          <p className="text-white/80 text-lg leading-relaxed max-w-sm mx-auto mb-10" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+            Create an account and start your journey towards a healthier, more sustainable lifestyle.
+          </p>
+          <div className="space-y-4 max-w-xs mx-auto">
+            {PERKS.map((perk, i) => (
+              <motion.div
+                key={perk}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20"
+              >
+                <CheckCircle2 size={20} style={{ color: 'var(--organic-olive)' }} />
+                <span className="text-sm font-medium">{perk}</span>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
       </div>
 
       {/* Right - Form */}
-      <div className="flex-1 flex items-center justify-center p-6">
-        <div className="bg-white rounded-3xl shadow-xl p-8 w-full max-w-md">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 mb-4">
-              <div style={{ backgroundColor: '#2D5A27' }} className="w-10 h-10 rounded-full flex items-center justify-center">
-                <Leaf size={20} className="text-white" />
-              </div>
-              <span className="text-2xl font-bold">
-                <span style={{ color: '#C62828' }}>Fresh</span>
-                <span style={{ color: '#2D5A27' }}>Mart</span>
-              </span>
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 overflow-y-auto">
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="bg-white rounded-[2rem] p-8 sm:p-12 w-full max-w-xl my-8"
+          style={{ boxShadow: 'var(--shadow-hover)' }}
+        >
+          <Link to="/" className="flex items-center gap-2 mb-8 justify-center sm:justify-start">
+            <div
+              className="w-10 h-10 rounded-full flex items-center justify-center"
+              style={{ backgroundColor: 'var(--primary)' }}
+            >
+              <ShoppingBag size={20} className="text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-800">Create your account</h1>
-            <p className="text-gray-500 text-sm mt-1">Join thousands of happy customers</p>
-          </div>
+            <span className="text-2xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
+              🍎 FreshCart
+            </span>
+          </Link>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-              <input
-                type="text"
-                name="name"
-                value={form.name}
-                onChange={handleChange}
-                placeholder="John Doe"
-                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-green-500 transition"
-              />
+          <h1 className="text-3xl font-bold text-gray-900 mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
+            Create Account
+          </h1>
+          <p className="text-gray-500 mb-8" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+            Thousands of families trust us for their daily organic needs.
+          </p>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="grid sm:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">Full Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  required
+                  value={form.name}
+                  onChange={handleChange}
+                  placeholder="Your Name"
+                  style={inputStyle}
+                  className="focus:border-primary"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">Account Type</label>
+                <select
+                  name="role"
+                  value={form.role}
+                  onChange={handleChange}
+                  style={inputStyle}
+                  className="focus:border-primary bg-white cursor-pointer"
+                >
+                  <option value="user">Customer</option>
+                  <option value="admin">Store Admin</option>
+                </select>
+              </div>
             </div>
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">Email Address</label>
               <input
                 type="email"
                 name="email"
+                required
                 value={form.email}
                 onChange={handleChange}
-                placeholder="you@example.com"
-                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-green-500 transition"
+                placeholder="hello@freshcart.com"
+                style={inputStyle}
+                className="focus:border-primary"
               />
             </div>
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">Password</label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   name="password"
+                  required
                   value={form.password}
                   onChange={handleChange}
-                  placeholder="Min. 6 characters"
-                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 pr-11 text-sm focus:outline-none focus:border-green-500 transition"
+                  placeholder="Minimum 6 characters"
+                  style={inputStyle}
+                  className="pr-12 focus:border-primary"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-3 text-gray-400 hover:text-gray-600"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Account Type</label>
-              <select
-                name="role"
-                value={form.role}
-                onChange={handleChange}
-                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-green-500 transition bg-white"
-              >
-                <option value="user">Customer</option>
-                <option value="admin">Admin</option>
-              </select>
-            </div>
-
             <button
               type="submit"
               disabled={loading}
-              style={{ backgroundColor: '#2D5A27' }}
-              className="w-full text-white py-3.5 rounded-full font-bold text-base hover:opacity-90 transition disabled:opacity-60 shadow-md mt-2"
+              className="w-full py-4 rounded-full font-bold text-lg transition shadow-lg hover:shadow-xl disabled:opacity-60 active:scale-[0.98] mt-4"
+              style={{
+                backgroundColor: 'var(--primary)',
+                color: 'var(--primary-foreground)',
+                fontFamily: "'DM Sans', sans-serif",
+              }}
             >
-              {loading ? 'Creating Account...' : 'Create Account 🌱'}
+              {loading ? 'Creating Account...' : 'Get Started 🌱'}
             </button>
           </form>
 
-          <p className="text-center text-sm text-gray-600 mt-6">
-            Already have an account?{' '}
-            <Link to="/login" style={{ color: '#C62828' }} className="font-bold hover:underline">
-              Login here
-            </Link>
-          </p>
-        </div>
+          <div className="mt-8 pt-8 border-t border-gray-100 text-center">
+            <p className="text-gray-600 font-medium">
+              Already a member?{' '}
+              <Link to="/login" className="text-accent font-bold hover:underline">
+                Sign In
+              </Link>
+            </p>
+          </div>
+        </motion.div>
       </div>
     </div>
   );

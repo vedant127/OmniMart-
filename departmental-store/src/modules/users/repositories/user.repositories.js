@@ -37,4 +37,31 @@ export const finduserbyemail = async (email) => {
 };
 
 // Keeping original camelCase export just in case
+// Keeping original camelCase export just in case
 export const findUserByEmail = finduserbyemail;
+
+// -- Addresses --
+export const addUserAddress = async (userId, {address_line1, address_line2, city, state, postal_code, country}) => {
+    const res = await query(
+        "INSERT INTO user_addresses (user_id, address_line1, address_line2, city, state, postal_code, country) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+        [userId, address_line1, address_line2, city, state, postal_code, country]
+    );
+    return res[0];
+};
+
+export const getUserAddress = async (userId) => {
+    return await query("SELECT * FROM user_addresses WHERE user_id = $1", [userId]);
+};
+
+export const updateUserAddress = async (userId, {id, address_line1, address_line2, city, state, postal_code, country}) => {
+    const res = await query(
+        "UPDATE user_addresses SET address_line1 = $1, address_line2 = $2, city = $3, state = $4, postal_code = $5, country = $6 WHERE user_id = $7 AND id = $8 RETURNING *",
+        [address_line1, address_line2, city, state, postal_code, country, userId, id]
+    );
+    return res[0];
+};
+
+export const deleteUserAddress = async (userId, id) => {
+    const res = await query("DELETE FROM user_addresses WHERE user_id = $1 AND id = $2 RETURNING *", [userId, id]);
+    return res[0];
+};
