@@ -3,7 +3,7 @@ import { authGuard } from "../../shared/auth.middleware.js";
 export const registerShoppingHandler = async (fastify, service) => {
 
     // --- CART ---
-    fastify.post("/api/shopping/cart", { preHandler: authGuard }, async (request, reply) => {
+    fastify.post("/api/v1/shopping/cart", { preHandler: authGuard }, async (request, reply) => {
         try {
             // we assume request.user.id maps to the userId
             const cartItemData = { ...request.body, userId: request.user.id };
@@ -14,7 +14,7 @@ export const registerShoppingHandler = async (fastify, service) => {
         }
     });
 
-    fastify.get("/api/shopping/cart", { preHandler: authGuard }, async (request, reply) => {
+    fastify.get("/api/v1/shopping/cart", { preHandler: authGuard }, async (request, reply) => {
         try {
             const cartItems = await service.getCartByUserId(request.user.id);
             reply.status(200).send(cartItems);
@@ -23,7 +23,7 @@ export const registerShoppingHandler = async (fastify, service) => {
         }
     });
 
-    fastify.patch("/api/shopping/cart/:id", { preHandler: authGuard }, async (request, reply) => {
+    fastify.patch("/api/v1/shopping/cart/:id", { preHandler: authGuard }, async (request, reply) => {
         try {
             const cartItem = await service.updateCart(request.params.id, request.body);
             reply.status(200).send(cartItem);
@@ -33,7 +33,7 @@ export const registerShoppingHandler = async (fastify, service) => {
     });
 
     // --- ORDERS ---
-    fastify.post("/api/shopping/orders", { preHandler: authGuard }, async (request, reply) => {
+    fastify.post("/api/v1/shopping/orders", { preHandler: authGuard }, async (request, reply) => {
         try {
             const orderData = { ...request.body, userId: request.user.id };
             const order = await service.createOrder(orderData);
@@ -43,7 +43,7 @@ export const registerShoppingHandler = async (fastify, service) => {
         }
     });
 
-    fastify.get("/api/shopping/orders", { preHandler: authGuard }, async (request, reply) => {
+    fastify.get("/api/v1/shopping/orders", { preHandler: authGuard }, async (request, reply) => {
         try {
             const orders = await service.getOrdersByUserId(request.user.id);
             reply.status(200).send(orders);
@@ -52,7 +52,7 @@ export const registerShoppingHandler = async (fastify, service) => {
         }
     });
 
-    fastify.get("/api/shopping/orders/:id", { preHandler: authGuard }, async (request, reply) => {
+    fastify.get("/api/v1/shopping/orders/:id", { preHandler: authGuard }, async (request, reply) => {
         try {
             const order = await service.getOrderById(request.params.id);
             reply.status(200).send(order);
@@ -61,7 +61,7 @@ export const registerShoppingHandler = async (fastify, service) => {
         }
     });
 
-    fastify.patch("/api/shopping/orders/:id", { preHandler: authGuard }, async (request, reply) => {
+    fastify.patch("/api/v1/shopping/orders/:id", { preHandler: authGuard }, async (request, reply) => {
         try {
             const order = await service.updateOrderStatus(request.params.id, request.body);
             reply.status(200).send(order);
@@ -71,7 +71,7 @@ export const registerShoppingHandler = async (fastify, service) => {
     });
 
     // --- PAYMENTS ---
-    fastify.post("/api/shopping/payments", { preHandler: authGuard }, async (request, reply) => {
+    fastify.post("/api/v1/shopping/payments", { preHandler: authGuard }, async (request, reply) => {
         try {
             const payment = await service.createPayment(request.body);
             reply.status(201).send(payment);
@@ -80,7 +80,7 @@ export const registerShoppingHandler = async (fastify, service) => {
         }
     });
 
-    fastify.get("/api/shopping/payments", { preHandler: authGuard }, async (request, reply) => {
+    fastify.get("/api/v1/shopping/payments", { preHandler: authGuard }, async (request, reply) => {
         try {
             const payments = await service.getPaymentsByUserId(request.user.id);
             reply.status(200).send(payments);
@@ -89,7 +89,7 @@ export const registerShoppingHandler = async (fastify, service) => {
         }
     });
 
-    fastify.post("/api/shopping/payments/verify", { preHandler: authGuard }, async (request, reply) => {
+    fastify.post("/api/v1/shopping/payments/verify", { preHandler: authGuard }, async (request, reply) => {
         try {
             const payment = await service.verifyPayment(request.body.paymentId, request.body);
             reply.status(200).send(payment);
@@ -100,7 +100,7 @@ export const registerShoppingHandler = async (fastify, service) => {
 
 
     // --- SHIPPING ---
-    fastify.post("/api/shopping/shipping", { preHandler: authGuard }, async (request, reply) => {
+    fastify.post("/api/v1/shopping/shipping", { preHandler: authGuard }, async (request, reply) => {
         try {
             const shipping = await service.createShipping(request.body);
             reply.status(201).send(shipping);
@@ -109,7 +109,7 @@ export const registerShoppingHandler = async (fastify, service) => {
         }
     });
 
-    fastify.get("/api/shopping/shipping/:orderId/track", { preHandler: authGuard }, async (request, reply) => {
+    fastify.get("/api/v1/shopping/shipping/:orderId/track", { preHandler: authGuard }, async (request, reply) => {
         try {
             const tracking = await service.getShippingByOrderId(request.params.orderId);
             reply.status(200).send(tracking);

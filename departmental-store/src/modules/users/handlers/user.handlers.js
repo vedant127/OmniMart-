@@ -19,7 +19,7 @@ import { authGuard } from "../../shared/auth.middleware.js";
 export const registeruserhandler = async (fastify , service) =>{
     // register user
     fastify.post(
-      "/api/users",
+      "/api/v1/users/register",
       async (request, reply) => {
         try {
             const user = await service.createuser(request.body);
@@ -32,7 +32,7 @@ export const registeruserhandler = async (fastify , service) =>{
 
     // get all users
     fastify.get(
-      "/api/users",
+      "/api/v1/users",
       { preHandler: authGuard },
       async (request, reply) => {
         try {
@@ -46,7 +46,7 @@ export const registeruserhandler = async (fastify , service) =>{
 
     // get user by id
     fastify.get(
-      "/api/users/:userId",
+      "/api/v1/users/:userId",
       { preHandler: authGuard },
       async (request, reply) => {
         try {
@@ -60,7 +60,7 @@ export const registeruserhandler = async (fastify , service) =>{
 
     // update user
     fastify.patch(
-      "/api/users/:userId",
+      "/api/v1/users/:userId",
       { preHandler: authGuard },
       async (request, reply) => {
         try {
@@ -74,7 +74,7 @@ export const registeruserhandler = async (fastify , service) =>{
 
     // delete user
     fastify.delete(
-      "/api/users/:userId",
+      "/api/v1/users/:userId",
       { preHandler: authGuard },
       async (request, reply) => {
         try {
@@ -88,7 +88,7 @@ export const registeruserhandler = async (fastify , service) =>{
 
     // login
     fastify.post(
-      "/api/users/login",
+      "/api/v1/users/login",
       async (request, reply) => {
         try {
             const tokens = await service.userlogin(request.body.email, request.body.password);

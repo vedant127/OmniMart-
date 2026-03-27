@@ -1,10 +1,11 @@
-import { hash } from "bcryptjs";
-import { createUserEntity }  from "../domain/user.entity.js";
-const userService = ({userRepository , auth , mailer}) => ({
-    
-    userlogin: async (email , password) => {
-        const rawuser = await userRepository.getuserbyemail(email);
-        if(!rawuser){
+import { createUserEntity } from "../domain/user.entity.js";
+
+const userService = ({ userRepository, auth, mailer }) => ({
+
+    // ✅ LOGIN
+    userlogin: async (email, password) => {
+        const rawuser = await userRepository.finduserbyemail(email);
+        if (!rawuser) {
             throw new Error("User not found");
         }
 
@@ -16,192 +17,137 @@ const userService = ({userRepository , auth , mailer}) => ({
             role: rawuser.role,
         });
 
-        const valid = await user.checkPassword(password , auth);
-        if(!valid){
+        const valid = await user.checkPassword(password, auth);
+        if (!valid) {
             throw new Error("Invalid password");
         }
 
-        //access token
-
-         const accessToken = auth.generateToken({
+        const payload = {
             id: user.getId(),
             email: user.getEmail(),
             role: user.getRole(),
-        }, {
-            expiresIn: "15m"
-        });
+        };
 
-        const refreshToken = auth.signRefreshToken({
-            id: user.getId(),
-            email: user.getEmail(),
-            role: user.getRole(),
-        }, {
-            expiresIn: "7d"
-        });
+        const accessToken = await auth.generateToken(payload);
+        const refreshToken = await auth.signrefreshtoken(payload);
 
-
-        return user , accessToken , refreshToken;
+        return {
+            user: {
+                id: user.getId(),
+                name: user.getName(),
+                email: user.getEmail(),
+                role: user.getRole(),
+            },
+            accessToken,
+            refreshToken,
+        };
     },
-    createuser: async (userData) => {    
-        
-        const hashpassword = await auth.hashpassword(userData.password);
 
-        // create user entity 
+    // ✅ REGISTER
+    createuser: async (userData) => {
+        const hashpassword = await auth.hashPassword(userData.password);
+
         const UserEntity = createUserEntity({
             ...userData,
-             hashpassword,
+            hashpassword,
         });
-           
-        // store the data in the database
 
-        // hash password
         const user = await userRepository.createuser({
             name: UserEntity.getName(),
             email: UserEntity.getEmail(),
             password: UserEntity.getPassword(),
             role: UserEntity.getRole(),
         });
-        
-        // perform some business logic
-        // sending email, etc.
-        await mailer.sendregistrationemail(
+
+        await mailer.sendRegistrationEmail(
             user.email,
             user.name,
-            `welcome ${user.name} ! your account has been created successfully`
+            `Welcome ${user.name}! Your account has been created successfully.`
         );
 
-        return user;
+        return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+        };
     },
+
+    // ✅ GET ALL USERS
     getalluser: async () => {
-        // pass the offset and limit as parameters
         const users = await userRepository.getalluser();
-
-        // perform some business logic
-        // e.g. filtering, sorting, etc.
-
         return users;
     },
+
+    // ✅ GET USER BY ID
     getuserbyid: async (userId) => {
         const rawuser = await userRepository.getuserbyid(userId);
-        const user = genrateuserentity({
+        if (!rawuser) {
+            throw new Error("User not found");
+        }
+        return {
             id: rawuser.id,
             name: rawuser.name,
             email: rawuser.email,
-            hashpassword: rawuser.password,
             role: rawuser.role,
-        })
-
-        return user;
+        };
     },
-    updateuser: async (userId, userData) => {
 
+    // ✅ UPDATE USER
+    updateuser: async (userId, userData) => {
         const existinguser = await userRepository.getuserbyid(userId);
-        if(!existinguser){
+        if (!existinguser) {
             throw new Error("User not found");
         }
 
-       const hashpassword = userData.password
-       ? await auth.hashpassword(userData.password)
-       : existinguser.password;
+        const hashpassword = userData.password
+            ? await auth.hashPassword(userData.password)
+            : existinguser.password;
 
-
-       const UserEntity = createUserEntity({
-        id: existinguser.id,
-        name: userData.name || existinguser.name,
-        email: userData.email || existinguser.email,
-        hashpassword: hashpassword,
-        role: userData.role || existinguser.role,
-       })
-
-       const updatedUserData = {
-        name: UserEntity.getName(),
-        email: UserEntity.getEmail(),
-        password: UserEntity.getPassword(),
-        role: UserEntity.getRole(),
-       }
-
-        const updatedUser = await userRepository.updateuser(userId , updatedUserData);
-
-        // perform some business logic
-        // e.g. validating data, etc.
+        const updatedUser = await userRepository.updateuser(userId, {
+            name: userData.name || existinguser.name,
+            email: userData.email || existinguser.email,
+            password: hashpassword,
+            role: userData.role || existinguser.role,
+        });
 
         return {
             id: updatedUser.id,
-            name: updatedUser.getname(),
-            email: updatedUser.getEmail(),
-            role: updatedUser.getRole(),
+            name: updatedUser.name,
+            email: updatedUser.email,
+            role: updatedUser.role,
         };
     },
+
+    // ✅ DELETE USER
     deleteuser: async (userId) => {
-        const deletedUser = await userRepository.deleteuser(userId);
-
-        // perform some business logic
-        // e.g. logging, etc.
-
-        return{ id: userId};
+        await userRepository.deleteuser(userId);
+        return { message: "User deleted successfully", id: userId };
     },
 
-    resetpassword: async (email) => {
-
-        // genrate new password
-
-        const newPassword = Math.random().toString(12).slice(-8);
-
-        const hashpassword = await auth.hashpassword(newPassword);
-
-        //updte new password
-
-        const updatedUser = await userRepository.getuserbyemail(email);
-        if (!user) {
-            throw new console.error("user not found with the provided email");
-         }
-
-         await userRepository.updatedUser(user.id, {
-            hashpassword
-         });
-
-        //send the new password to the user's email
-
-        await mailer.sendregistrationemail(
-            user.email,
-            user.name,
-            `welcome ${user.name} ! your account has been created successfully`
-        );
-        return{ Message: "a new password is send to your registered email "};
-    },
-
+    // ✅ REFRESH TOKEN
     refreshToken: async (token) => {
-
-        const decodedToken = auth.verifyRefreshToken(token);
-        if(!decodedToken){
+        const decodedToken = await auth.verifyrefreshtoken(token);
+        if (!decodedToken) {
             throw new Error("Invalid refresh token");
         }
 
         const user = await userRepository.getuserbyid(decodedToken.id);
-        if(!user){
+        if (!user) {
             throw new Error("User not found");
         }
 
-        const accessToken = auth.generateToken({
+        const payload = {
             id: user.id,
             email: user.email,
             role: user.role,
-        }, {
-            expiresIn: "15m"
-        });
+        };
 
-        const refreshToken = auth.signRefreshToken({
-            id: user.getId(),
-            email: user.getEmail(),
-            role: user.getRole(),
-        }, {
-            expiresIn: "7d"
-        });
+        const accessToken = await auth.generateToken(payload);
+        const refreshToken = await auth.signrefreshtoken(payload);
 
         return { accessToken, refreshToken };
-
     },
-
 });
 
 export default userService;
