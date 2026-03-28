@@ -18,7 +18,7 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, isLoggedIn, logout, cartCount, refreshCart } = useAuth(); // Added refreshCart here
+  const { user, isLoggedIn, logout, cartCount } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -103,25 +103,22 @@ const Navbar = () => {
             ))}
           </ul>
 
-          {/* Search */}
-          <form 
-            onSubmit={handleSearch}
-            className="hidden lg:flex items-center rounded-2xl px-5 py-2.5 gap-3 w-72 transition-all border border-transparent focus-within:border-primary/20 focus-within:ring-4 focus-within:ring-primary/5 group"
-            style={{ backgroundColor: "var(--muted)" }}
-          >
-            <Search className="h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search for products..."
-              className="bg-transparent text-xs font-medium outline-none w-full placeholder:text-muted-foreground/60"
-              style={{ fontFamily: "'DM Sans', sans-serif", color: "var(--foreground)" }}
-            />
-          </form>
-
           {/* Icons */}
           <div className="flex items-center gap-3">
+             <form 
+              onSubmit={handleSearch}
+              className="hidden lg:flex items-center rounded-2xl px-5 py-2.5 gap-3 w-64 transition-all border border-transparent focus-within:border-primary/20 focus-within:ring-4 focus-within:ring-primary/5 group bg-gray-50"
+            >
+              <Search className="h-4 w-4 text-gray-400 group-focus-within:text-primary transition-colors" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search..."
+                className="bg-transparent text-xs font-medium outline-none w-full"
+              />
+            </form>
+
             <button className="relative p-2.5 rounded-xl hover:bg-primary/5 transition group">
               <Heart className="h-5 w-5 text-foreground group-hover:text-accent transition-colors" />
               <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-accent border-2 border-white" />
@@ -130,8 +127,8 @@ const Navbar = () => {
               <ShoppingCart className="h-5 w-5 text-foreground group-hover:text-primary transition-colors" />
               {cartCount > 0 && (
                 <span
-                  className="absolute -top-1.5 -right-1.5 text-white text-[10px] font-black rounded-full h-5 w-5 flex items-center justify-center shadow-lg transform transition group-hover:scale-110"
-                  style={{ backgroundColor: "var(--accent)", boxShadow: "0 4px 10px rgba(192,57,43,0.3)" }}
+                  className="absolute -top-1.5 -right-1.5 text-white text-[10px] font-black rounded-full h-5 w-5 flex items-center justify-center shadow-lg"
+                  style={{ backgroundColor: "var(--accent)" }}
                 >
                   {cartCount}
                 </span>
@@ -142,32 +139,16 @@ const Navbar = () => {
 
             {isLoggedIn ? (
               <div className="flex items-center gap-3">
-                <Link to="/orders" className="hidden sm:flex flex-col items-end">
-                  <span className="text-[10px] font-bold text-muted-foreground leading-none">My Orders</span>
-                  <span className="text-[12px] font-bold text-foreground leading-tight">History 📋</span>
-                </Link>
-                <div className="flex gap-2">
-                   <Link to="/orders" className="p-2.5 rounded-xl hover:bg-primary/5 transition bg-muted/50 border border-white">
-                    <User className="h-5 w-5 text-primary" />
-                  </Link>
-                  <button
-                    onClick={logout}
-                    className="p-2.5 rounded-xl hover:bg-accent/5 transition text-muted-foreground hover:text-accent"
-                    title="Logout"
-                  >
-                    <LogOut className="h-5 w-5" />
-                  </button>
-                </div>
+                <button
+                  onClick={logout}
+                  className="p-2.5 rounded-xl hover:bg-accent/5 transition text-muted-foreground hover:text-accent"
+                >
+                  <LogOut className="h-5 w-5" />
+                </button>
               </div>
             ) : (
-              <Link to="/login" className="flex items-center gap-3 px-1 rounded-xl group">
-                <div className="hidden sm:flex flex-col items-end">
-                  <span className="text-[10px] font-bold text-muted-foreground leading-none">Guest User</span>
-                  <span className="text-[12px] font-bold text-foreground leading-tight group-hover:text-primary transition-colors">Sign In 👤</span>
-                </div>
-                <div className="p-2.5 rounded-xl bg-primary/10 transition group-hover:bg-primary group-hover:text-white group-hover:scale-110">
-                  <User className="h-5 w-5 text-primary group-hover:text-white" />
-                </div>
+              <Link to="/login" className="p-2.5 rounded-xl bg-primary/10 transition hover:bg-primary hover:text-white">
+                <User className="h-5 w-5" />
               </Link>
             )}
             
@@ -179,50 +160,6 @@ const Navbar = () => {
             </button>
           </div>
         </div>
-
-        {/* Mobile menu */}
-        <AnimatePresence>
-          {mobileOpen && (
-            <motion.div 
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="xl:hidden border-t overflow-hidden" 
-              style={{ borderColor: "var(--border)" }}
-            >
-              <div className="px-6 py-8 space-y-6 bg-white">
-                <ul className="flex flex-col gap-6 text-[14px] font-black uppercase tracking-widest">
-                  {navLinks.map((link) => (
-                    <li key={link.label}>
-                      <Link
-                        to={link.path}
-                        className={`flex items-center justify-between group ${location.pathname === link.path ? "text-primary" : "text-foreground"}`}
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        {link.label}
-                        <ArrowRight size={16} className={`transition-transform group-hover:translate-x-1 ${location.pathname === link.path ? "opacity-100" : "opacity-0"}`} />
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-                <div className="pt-6 border-t border-gray-100 space-y-4">
-                  <form onSubmit={handleSearch} className="flex items-center bg-muted rounded-2xl px-5 py-4 gap-3">
-                    <Search className="h-5 w-5 text-muted-foreground" />
-                    <input autoFocus placeholder="Search for items..." className="bg-transparent outline-none w-full font-bold text-sm" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-                  </form>
-                  <div className="grid grid-cols-2 gap-4">
-                    <button className="flex items-center justify-center gap-2 py-4 rounded-2xl bg-muted font-bold text-xs uppercase tracking-widest text-foreground transition active:scale-95">
-                      <Heart size={16} /> Wishlist
-                    </button>
-                    <button className="flex items-center justify-center gap-2 py-4 rounded-2xl bg-primary font-bold text-xs uppercase tracking-widest text-white transition shadow-lg active:scale-95">
-                      <ShoppingCart size={16} /> Checkout
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </nav>
     </header>
   );

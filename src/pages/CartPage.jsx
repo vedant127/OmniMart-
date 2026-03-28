@@ -177,13 +177,6 @@ const CartPage = () => {
                         {formatPrice((item.price || 0) * (item.quantity || 1))}
                       </span>
                     </div>
-
-                    <button 
-                      onClick={() => handleRemove(item.product_id)}
-                      className="p-3 text-muted-foreground hover:text-accent transition-colors"
-                    >
-                      <Trash2 size={20} />
-                    </button>
                   </motion.div>
                 ))}
               </AnimatePresence>

@@ -100,11 +100,78 @@ CREATE TABLE IF NOT EXISTS shipping (
 );
 `;
 
+const seedData = async () => {
+    try {
+        console.log("Cleaning old data...");
+        await pool.query("DELETE FROM carts;");
+        await pool.query("DELETE FROM order_items;");
+        await pool.query("DELETE FROM inventories;");
+        await pool.query("DELETE FROM product_variants;");
+        await pool.query("DELETE FROM products;");
+        await pool.query("DELETE FROM categories;");
+
+        console.log("Seeding FreshMart organic categories...");
+        const categories = [
+            { name: "Fresh Fruits", description: "Organic & garden-fresh fruits" },
+            { name: "Vital Vegetables", description: "Crisp, vitalizing vegetables" },
+            { name: "Pure Dairy", description: "Farm-fresh milk, eggs & cheese" },
+            { name: "Fresh Bakery", description: "Artisan breads and sweet treats" },
+            { name: "Healthy Beverages", description: "Natural juices and health drinks" }
+        ];
+
+        const categoryIds = {};
+        for (const cat of categories) {
+            const res = await pool.query(
+                "INSERT INTO categories (name, description) VALUES ($1, $2) RETURNING id",
+                [cat.name, cat.description]
+            );
+            categoryIds[cat.name] = res.rows[0].id;
+        }
+
+        console.log("Seeding organic products...");
+        const products = [
+            // Fruits
+            { name: "Organic Red Apple", price: 120, cat: "Fresh Fruits", img: "https://images.unsplash.com/photo-1560806887-1e4cd0b6bcd6" },
+            { name: "Golden Banana", price: 60, cat: "Fresh Fruits", img: "https://images.unsplash.com/photo-1571771894821-ad99026107b8" },
+            { name: "Fresh Strawberries", price: 250, cat: "Fresh Fruits", img: "https://images.unsplash.com/photo-1464965811823-300482596954" },
+            
+            // Vegetables
+            { name: "Green Broccoli", price: 80, cat: "Vital Vegetables", img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd" },
+            { name: "Vine Tomatoes", price: 45, cat: "Vital Vegetables", img: "https://images.unsplash.com/photo-1518977676601-b53f82aba655" },
+            
+            // Dairy
+            { name: "Farm Fresh Milk", price: 65, cat: "Pure Dairy", img: "https://images.unsplash.com/photo-1550583724-1255818c053b" },
+            { name: "Organic Eggs (12pk)", price: 180, cat: "Pure Dairy", img: "https://images.unsplash.com/photo-1506976785307-8732e854ad03" },
+            
+            // Bakery
+            { name: "Whole Wheat Bread", price: 55, cat: "Fresh Bakery", img: "https://images.unsplash.com/photo-1509440159596-0249088772ff" },
+            { name: "French Croissant", price: 90, cat: "Fresh Bakery", img: "https://images.unsplash.com/photo-1555507036-ab1f4038808a" },
+            
+            // Beverages
+            { name: "Natural Orange Juice", price: 150, cat: "Healthy Beverages", img: "https://images.unsplash.com/photo-1613478223719-2ab802602423" }
+        ];
+
+        for (const prod of products) {
+            await pool.query(
+                "INSERT INTO products (name, description, price, category_id, image_url) VALUES ($1, $2, $3, $4, $5)",
+                [prod.name, `${prod.name} from organic farms`, prod.price, categoryIds[prod.cat], `${prod.img}?auto=format&fit=crop&q=80&w=600`]
+            );
+        }
+
+        console.log("FreshMart database restored successfully!");
+    } catch (err) {
+        console.error("Seeding error:", err);
+    }
+};
+
 const runMigration = async () => {
     try {
         console.log("Starting database migration...");
         await pool.query(schema);
         console.log("Database migration completed successfully!");
+        
+        // Run seed after migration
+        await seedData();
     } catch (error) {
         console.error("Migration error:", error);
     } finally {

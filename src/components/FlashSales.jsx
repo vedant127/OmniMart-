@@ -2,17 +2,37 @@ import { useState, useEffect } from "react";
 import { Heart, ShoppingCart, Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
-import { addToCart } from "../services/api";
-
-const products = [
-  { id: 1, name: "Blueberry", category: "Fresh Fruits", weight: "100 g", kcal: 300, rating: 4.9, price: 860, oldPrice: 1200, discount: 28, image: "/images/blueberry.png" },
-  { id: 2, name: "Strawberry", category: "Fresh Fruits", weight: "150 g", kcal: 250, rating: 4.8, price: 999, oldPrice: 1400, discount: 29, image: "/images/strawberry.png" },
-  { id: 3, name: "Green Grapes", category: "Fresh Fruits", weight: "200 g", kcal: 350, rating: 4.7, price: 749, oldPrice: 1100, discount: 32, image: "/images/grapes.png" },
-  { id: 4, name: "Orange", category: "Fresh Fruits", weight: "120 g", kcal: 200, rating: 5.0, price: 549, oldPrice: 800, discount: 31, image: "/images/orange.png" },
-];
+import { getProducts, addToCart } from "../services/api";
+import { useAuth } from "../store/AuthContext";
 
 const FlashSales = () => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState({ days: 2, hours: 11, mins: 26, secs: 3 });
+  const { refreshCart } = useAuth();
+
+  useEffect(() => {
+    const fetchFlashSales = async () => {
+      try {
+        const res = await getProducts();
+        // Since we don't have a specific flash sale flag, we'll take a subset of products
+        // and add some mock flash sale data for the UI
+        const data = (res.data || []).slice(0, 4).map(p => ({
+          ...p,
+          oldPrice: Math.round(p.price * 1.3),
+          discount: 30,
+          rating: 4.8,
+          weight: "500 g"
+        }));
+        setProducts(data);
+      } catch (err) {
+        console.error("Failed to fetch products:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchFlashSales();
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -35,6 +55,7 @@ const FlashSales = () => {
     try {
       await addToCart({ productId: product.id, quantity: 1 });
       toast.success(`${product.name} added to cart! 🛒`);
+      refreshCart();
     } catch {
       toast.error("Please login to add to cart");
     }
@@ -54,7 +75,7 @@ const FlashSales = () => {
                 { val: pad(timeLeft.hours), label: "Hours" },
                 { val: pad(timeLeft.mins), label: "Mins" },
                 { val: pad(timeLeft.secs), label: "Secs" },
-                { val: pad("57"), label: "Millis" }, // Just to match the screenshot [02:11:25:57]
+                { val: pad("57"), label: "Millis" },
               ].map((t, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <div
@@ -83,7 +104,11 @@ const FlashSales = () => {
 
         {/* Product grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.map((product, i) => (
+          {loading ? (
+             Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="bg-white rounded-[2rem] h-80 animate-pulse border border-gray-100" />
+            ))
+          ) : products.map((product, i) => (
             <motion.div
               key={product.id}
               initial={{ opacity: 0, y: 20 }}
@@ -108,22 +133,38 @@ const FlashSales = () => {
                   <Heart className="h-4 w-4" style={{ color: "var(--muted-foreground)" }} />
                 </button>
                 <img 
-                   src={product.image} 
+                   src={product.image_url || (() => {
+                        const name = (product.name || "").toLowerCase();
+                        const cat = (product.category_name || "").toLowerCase();
+                        const combined = `${name} ${cat}`;
+                        if (combined.includes("fruit") || combined.includes("berry") || combined.includes("apple")) 
+                          return "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&q=80&w=300";
+                        if (combined.includes("veg") || combined.includes("broccoli") || combined.includes("salad")) 
+                          return "https://images.unsplash.com/photo-1566385101042-1a000c1268c4?auto=format&fit=crop&q=80&w=300";
+                        if (combined.includes("dairy") || combined.includes("milk") || combined.includes("egg")) 
+                          return "https://images.unsplash.com/photo-1550583724-1255818c053b?auto=format&fit=crop&q=80&w=300";
+                        if (combined.includes("bread") || combined.includes("bake") || combined.includes("cake")) 
+                          return "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=300";
+                        if (combined.includes("bev") || combined.includes("drink") || combined.includes("juice")) 
+                          return "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&q=80&w=300";
+
+                        return "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=300"; // Organic shelf
+                   })()} 
                    alt={product.name}
-                   className="w-40 h-40 object-contain group-hover:scale-110 transition-transform duration-500"
+                   className="w-full h-40 object-contain group-hover:scale-110 transition-transform duration-500 drop-shadow-md"
                 />
               </div>
 
               {/* Info */}
               <div className="space-y-2">
                 <p className="text-xs" style={{ color: "var(--muted-foreground)", fontFamily: "'DM Sans', sans-serif" }}>
-                  {product.category}
+                  {product.category_name}
                 </p>
                 <div className="flex items-center justify-between">
-                  <h3 className="font-semibold" style={{ fontFamily: "'Playfair Display', serif", color: "var(--foreground)" }}>
+                  <h3 className="font-semibold truncate" style={{ fontFamily: "'Playfair Display', serif", color: "var(--foreground)" }}>
                     {product.name}
                   </h3>
-                  <span className="text-xs" style={{ color: "var(--muted-foreground)" }}>{product.weight}</span>
+                  <span className="text-xs shrink-0" style={{ color: "var(--muted-foreground)" }}>{product.weight}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Star className="h-3 w-3" fill="var(--organic-olive)" style={{ color: "var(--organic-olive)" }} />
