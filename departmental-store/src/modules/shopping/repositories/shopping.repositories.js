@@ -11,7 +11,7 @@ export const createCart = async ({userId, productId, variantId, quantity}) => {
 
 export const getCartByUserId = async (userId) => {
     return await query(
-        `SELECT c.id, c.user_id, c.product_id, c.quantity, p.name, p.price, p.emoji, p.image_url 
+        `SELECT c.id, c.user_id, c.product_id, c.quantity, p.name, p.price, p.image_url 
          FROM carts c 
          JOIN products p ON c.product_id = p.id 
          WHERE c.user_id = $1`, 

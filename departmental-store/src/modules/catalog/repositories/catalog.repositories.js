@@ -55,7 +55,13 @@ export const createCategory = async ({name, description}) => {
 };
 
 export const getAllCategories = async () => {
-    const res = await query("SELECT * FROM categories");
+    const res = await query(`
+        SELECT c.*, COUNT(p.id)::int AS product_count
+        FROM categories c
+        LEFT JOIN products p ON p.category_id = c.id
+        GROUP BY c.id
+        ORDER BY c.name
+    `);
     return res;
 };
 

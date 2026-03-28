@@ -10,6 +10,7 @@ export const registerShoppingHandler = async (fastify, service) => {
             const cartItem = await service.createCart(cartItemData);
             reply.status(201).send(cartItem);
         } catch (error) {
+            console.error("Cart POST error:", error);
             reply.status(500).send({ error: error.message });
         }
     });
@@ -19,6 +20,7 @@ export const registerShoppingHandler = async (fastify, service) => {
             const cartItems = await service.getCartByUserId(request.user.id);
             reply.status(200).send(cartItems);
         } catch (error) {
+            console.error("Cart GET error:", error);
             reply.status(500).send({ error: error.message });
         }
     });

@@ -29,7 +29,7 @@ const Categories = () => {
           return {
             ...cat,
             emoji: emoji,
-            count: cat.product_count || Math.floor(Math.random() * 20) + 5
+            count: cat.product_count ?? 0
           };
         });
         setCategories(data);
@@ -78,51 +78,59 @@ const Categories = () => {
              Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="h-48 rounded-2xl animate-pulse bg-white/50 border border-white" />
             ))
-          ) : categories.map((cat, i) => (
-            <motion.div
-              key={cat.id || cat.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.07 }}
-            >
-              <Link
-                to={`/products?category=${encodeURIComponent(cat.name)}`}
-                className="block rounded-2xl p-6 flex flex-col items-center gap-3 cursor-pointer group hover:-translate-y-1 transition-all"
-                style={{ backgroundColor: "var(--card)", boxShadow: "var(--shadow-card)" }}
+          ) : categories.length > 0 ? (
+            categories.map((cat, i) => (
+              <motion.div
+                key={cat.id || cat.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.07 }}
               >
-                <div
-                  className="h-20 w-20 rounded-full flex items-center justify-center overflow-hidden bg-white/50 border border-white"
+                <Link
+                  to={`/products?category=${encodeURIComponent(cat.name)}`}
+                  className="block rounded-2xl p-6 flex flex-col items-center gap-3 cursor-pointer group hover:-translate-y-1 transition-all"
+                  style={{ backgroundColor: "var(--card)", boxShadow: "var(--shadow-card)" }}
                 >
-                  <img
-                    src={(() => {
-                        const name = (cat.name || "").toLowerCase();
-                        if (name.includes("fruit")) return "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&q=80&w=150";
-                        if (name.includes("veg")) return "https://images.unsplash.com/photo-1566385101042-1a000c1268c4?auto=format&fit=crop&q=80&w=150";
-                        if (name.includes("dairy") || name.includes("egg")) return "https://images.unsplash.com/photo-1550583724-1255818c053b?auto=format&fit=crop&q=80&w=150";
-                        if (name.includes("bread") || name.includes("bake")) return "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=150";
-                        if (name.includes("bev") || name.includes("drink")) return "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&q=80&w=150";
-                        return "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=150";
-                    })()}
-                    alt={cat.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                </div>
-                <h3
-                  className="font-semibold text-sm truncate w-full text-center mt-1"
-                  style={{ fontFamily: "'Playfair Display', serif", color: "var(--foreground)" }}
-                >
-                  {cat.name}
-                </h3>
-                <p
-                  className="text-xs"
-                  style={{ color: "var(--muted-foreground)", fontFamily: "'DM Sans', sans-serif" }}
-                >
-                  {cat.count} items
-                </p>
-              </Link>
-            </motion.div>
-          ))}
+                  <div
+                    className="h-20 w-20 rounded-full flex items-center justify-center overflow-hidden bg-white/50 border border-white"
+                  >
+                    <img
+                      src={(() => {
+                          const name = (cat.name || "").toLowerCase();
+                          if (name.includes("fruit")) return "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&q=80&w=150";
+                          if (name.includes("veg")) return "https://images.unsplash.com/photo-1566385101042-1a000c1268c4?auto=format&fit=crop&q=80&w=150";
+                          if (name.includes("dairy") || name.includes("egg")) return "https://images.unsplash.com/photo-1550583724-1255818c053b?auto=format&fit=crop&q=80&w=150";
+                          if (name.includes("bread") || name.includes("bake")) return "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=150";
+                          if (name.includes("bev") || name.includes("drink")) return "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&q=80&w=150";
+                          return "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=150";
+                      })()}
+                      alt={cat.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                  </div>
+                  <h3
+                    className="font-semibold text-sm truncate w-full text-center mt-1"
+                    style={{ fontFamily: "'Playfair Display', serif", color: "var(--foreground)" }}
+                  >
+                    {cat.name}
+                  </h3>
+                  <p
+                    className="text-xs"
+                    style={{ color: "var(--muted-foreground)", fontFamily: "'DM Sans', sans-serif" }}
+                  >
+                    {cat.count} items
+                  </p>
+                </Link>
+              </motion.div>
+            ))
+          ) : (
+            <div className="col-span-full py-12 text-center rounded-2xl bg-white/50 border border-dashed border-primary/30">
+               <p className="text-sm font-bold opacity-70" style={{ color: "var(--primary)" }}>
+                 No categories in database. Please run: <code className="bg-primary/10 px-2 py-1 rounded">node src/db/migrate.js</code> to seed your products.
+               </p>
+            </div>
+          )}
         </div>
       </div>
     </section>
