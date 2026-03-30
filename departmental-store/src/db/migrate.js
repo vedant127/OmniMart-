@@ -142,60 +142,66 @@ const seedData = async () => {
         }
 
         console.log("Seeding organic products...");
+        // All URLs verified directly from pexels.com — no rate limits, no API key needed
         const products = [
-          // Fresh Fruits
-          { name: "Organic Red Apple", price: 120, cat: "Fresh Fruits", img: "https://images.unsplash.com/photo-1560806887-1e4cd0b6bcd6" },
-          { name: "Golden Banana", price: 60, cat: "Fresh Fruits", img: "https://images.unsplash.com/photo-1571771894821-ad99026107b8" },
-          { name: "Fresh Strawberries", price: 250, cat: "Fresh Fruits", img: "https://images.unsplash.com/photo-1464965811823-300482596954" },
-          { name: "Sweet Mango", price: 180, cat: "Fresh Fruits", img: "https://images.unsplash.com/photo-1553279768-865429fa0078" },
-          { name: "Blueberry Pack", price: 320, cat: "Fresh Fruits", img: "https://images.unsplash.com/photo-1497534446932-c946d731f81d" },
-          { name: "Juicy Orange", price: 90, cat: "Fresh Fruits", img: "https://images.unsplash.com/photo-1557800636-894a64c1696f" },
-          { name: "Green Pear", price: 110, cat: "Fresh Fruits", img: "https://images.unsplash.com/photo-1514756331096-242f3900ef8e" },
-          { name: "Fresh Pineapple", price: 150, cat: "Fresh Fruits", img: "https://images.unsplash.com/photo-1550258114-68bd299768c5" },
-          
-          // Vital Vegetables
-          { name: "Green Broccoli", price: 80, cat: "Vital Vegetables", img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd" },
-          { name: "Vine Tomatoes", price: 45, cat: "Vital Vegetables", img: "https://images.unsplash.com/photo-1518977676601-b53f82aba655" },
-          { name: "Baby Carrots", price: 55, cat: "Vital Vegetables", img: "https://images.unsplash.com/photo-1590865101275-483624df0dd0" },
-          { name: "Purple Cabbage", price: 70, cat: "Vital Vegetables", img: "https://images.unsplash.com/photo-1509372265551-04df865f7215" },
-          { name: "Fresh Spinach", price: 40, cat: "Vital Vegetables", img: "https://images.unsplash.com/photo-1576045057995-568f588f82fb" },
-          { name: "Bell Peppers (Mix)", price: 120, cat: "Vital Vegetables", img: "https://images.unsplash.com/photo-1566385101042-1a000c1268c4" },
-          { name: "Organic Cucumber", price: 35, cat: "Vital Vegetables", img: "https://images.unsplash.com/photo-1544650030-3c7278d910af" },
-          { name: "Red Onion", price: 30, cat: "Vital Vegetables", img: "https://images.unsplash.com/photo-1508747703725-71977713d540" },
-          
-          // Pure Dairy
-          { name: "Farm Fresh Milk", price: 65, cat: "Pure Dairy", img: "https://images.unsplash.com/photo-1550583724-1255818c053b" },
-          { name: "Organic Eggs (12pk)", price: 180, cat: "Pure Dairy", img: "https://images.unsplash.com/photo-1506976785307-8732e854ad03" },
-          { name: "Cheddar Cheese", price: 290, cat: "Pure Dairy", img: "https://images.unsplash.com/photo-1486297678162-ad2a19b05845" },
-          { name: "Greek Yogurt", price: 140, cat: "Pure Dairy", img: "https://images.unsplash.com/photo-1488477181946-6428a0291777" },
-          { name: "Farm Butter", price: 210, cat: "Pure Dairy", img: "https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d" },
-          { name: "Mozzarella Ball", price: 350, cat: "Pure Dairy", img: "https://images.unsplash.com/photo-1559561853-08451507cbe7" },
-          { name: "Almond Milk", price: 240, cat: "Pure Dairy", img: "https://images.unsplash.com/photo-1563444536294-811ad4824dc7" },
-          
-          // Fresh Bakery
-          { name: "Whole Wheat Bread", price: 55, cat: "Fresh Bakery", img: "https://images.unsplash.com/photo-1509440159596-0249088772ff" },
-          { name: "French Croissant", price: 90, cat: "Fresh Bakery", img: "https://images.unsplash.com/photo-1555507036-ab1f4038808a" },
-          { name: "Chocolate Muffin", price: 75, cat: "Fresh Bakery", img: "https://images.unsplash.com/photo-1582231370720-639a09995393" },
-          { name: "Baguette Tradicion", price: 110, cat: "Fresh Bakery", img: "https://images.unsplash.com/photo-1597079910443-60c43fc4f729" },
-          { name: "Garlic Focaccia", price: 140, cat: "Fresh Bakery", img: "https://images.unsplash.com/photo-1534073828943-f801091bb24f" },
-          { name: "Blueberry Danishes", price: 120, cat: "Fresh Bakery", img: "https://images.unsplash.com/photo-1509365465985-25d11c17e812" },
-          { name: "Sourdough Loaf", price: 180, cat: "Fresh Bakery", img: "https://images.unsplash.com/photo-1585478259715-876a2371ee58" },
-          
-          // Healthy Beverages
-          { name: "Natural Orange Juice", price: 150, cat: "Healthy Beverages", img: "https://images.unsplash.com/photo-1613478223719-2ab802602423" },
-          { name: "Cold Brew Coffee", price: 220, cat: "Healthy Beverages", img: "https://images.unsplash.com/photo-1517701604599-bb29b565090c" },
-          { name: "Matcha Green Tea", price: 280, cat: "Healthy Beverages", img: "https://images.unsplash.com/photo-1515696955266-4167e13233ee" },
-          { name: "Sparkling Water", price: 45, cat: "Healthy Beverages", img: "https://images.unsplash.com/photo-1551613284-cd974df833b1" },
-          { name: "Fresh Coconut Water", price: 95, cat: "Healthy Beverages", img: "https://images.unsplash.com/photo-1522045330386-89680373ab9f" },
-          { name: "Detox Green Juice", price: 210, cat: "Healthy Beverages", img: "https://images.unsplash.com/photo-1622597467825-f82856250b34" },
-          { name: "Organic Apple Cider", price: 160, cat: "Healthy Beverages", img: "https://images.unsplash.com/photo-1624462966581-bc6d768cbce5" }
+          // 🍎 Fresh Fruits
+          { name: "Organic Red Apple",    price: 120, desc: "Crisp organic red apples fresh from the orchard",            cat: "Fresh Fruits",      img: "https://images.pexels.com/photos/1300972/pexels-photo-1300972.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Golden Banana",        price: 60,  desc: "Perfectly ripened golden bananas, rich in potassium",        cat: "Fresh Fruits",      img: "https://images.pexels.com/photos/1093038/pexels-photo-1093038.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Fresh Strawberries",   price: 250, desc: "Sweet hand-picked strawberries bursting with flavour",       cat: "Fresh Fruits",      img: "https://images.pexels.com/photos/89778/strawberries-frisch-ripe-sweet-89778.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Alphonso Mango",       price: 180, desc: "Premium Alphonso mangoes — king of all mangoes",             cat: "Fresh Fruits",      img: "https://images.pexels.com/photos/918643/pexels-photo-918643.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Blueberry Pack 250g",  price: 320, desc: "Antioxidant-rich fresh blueberries, 250g pack",              cat: "Fresh Fruits",      img: "https://images.pexels.com/photos/1153655/pexels-photo-1153655.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Navel Oranges",        price: 90,  desc: "Vitamin C-rich navel oranges, thin-skinned and juicy",       cat: "Fresh Fruits",      img: "https://images.pexels.com/photos/327098/pexels-photo-327098.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Fresh Grapes",         price: 140, desc: "Plump, seedless grapes — perfect for snacking",              cat: "Fresh Fruits",      img: "https://images.pexels.com/photos/708777/pexels-photo-708777.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Fresh Pineapple",      price: 150, desc: "Tropical golden pineapple — sweet and tangy every bite",     cat: "Fresh Fruits",      img: "https://images.pexels.com/photos/947879/pexels-photo-947879.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Kiwi Fruit (6pc)",     price: 199, desc: "Vitamin C powerhouse — bright green kiwis, pack of 6",      cat: "Fresh Fruits",      img: "https://images.pexels.com/photos/1028599/pexels-photo-1028599.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+
+          // 🥦 Vital Vegetables
+          { name: "Fresh Broccoli",       price: 80,  desc: "Farm-fresh broccoli florets — superfood for your family",   cat: "Vital Vegetables",  img: "https://images.pexels.com/photos/47347/broccoli-vegetable-food-healthy-47347.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Vine Tomatoes",        price: 45,  desc: "Ripened on the vine for maximum sweetness and flavour",     cat: "Vital Vegetables",  img: "https://images.pexels.com/photos/1327838/pexels-photo-1327838.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Baby Carrots 500g",    price: 55,  desc: "Tender, sweet baby carrots — perfect for snacking",         cat: "Vital Vegetables",  img: "https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Purple Cabbage",       price: 70,  desc: "Vibrant purple cabbage — packed with antioxidants",         cat: "Vital Vegetables",  img: "https://images.pexels.com/photos/1458694/pexels-photo-1458694.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Baby Spinach Leaves",  price: 40,  desc: "Baby spinach leaves — tender, mild, and iron-rich",         cat: "Vital Vegetables",  img: "https://images.pexels.com/photos/2255935/pexels-photo-2255935.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Mixed Bell Peppers",   price: 120, desc: "Red, yellow, green bell peppers — colourful and crunchy",   cat: "Vital Vegetables",  img: "https://images.pexels.com/photos/594137/pexels-photo-594137.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Organic Cucumber",     price: 35,  desc: "Cool, crispy cucumbers straight from organic farms",        cat: "Vital Vegetables",  img: "https://images.pexels.com/photos/2329440/pexels-photo-2329440.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Red Onions",           price: 30,  desc: "Sharp, flavourful red onions for cooking and salads",       cat: "Vital Vegetables",  img: "https://images.pexels.com/photos/4197447/pexels-photo-4197447.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Sweet Corn",           price: 50,  desc: "Fresh golden sweet corn, naturally sweet and juicy",        cat: "Vital Vegetables",  img: "https://images.pexels.com/photos/1084540/pexels-photo-1084540.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+
+          // 🥛 Pure Dairy
+          { name: "Farm Fresh Milk 1L",   price: 65,  desc: "Full-cream whole milk from local farms, 1 litre",           cat: "Pure Dairy",        img: "https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Organic Eggs 12pk",    price: 180, desc: "Free-range organic eggs — golden yolk, superior nutrition", cat: "Pure Dairy",        img: "https://images.pexels.com/photos/162712/egg-white-food-protein-162712.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Cheddar Cheese 200g",  price: 290, desc: "Aged sharp cheddar cheese, 200g — rich and crumbly",        cat: "Pure Dairy",        img: "https://images.pexels.com/photos/821365/pexels-photo-821365.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Greek Yogurt 400g",    price: 140, desc: "Thick, creamy Greek yogurt — high protein, probiotic-rich", cat: "Pure Dairy",        img: "https://images.pexels.com/photos/1435706/pexels-photo-1435706.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Organic Butter 250g",  price: 210, desc: "Pure churned organic butter from grass-fed cows, 250g",     cat: "Pure Dairy",        img: "https://images.pexels.com/photos/531334/pexels-photo-531334.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Fresh Mozzarella",     price: 350, desc: "Soft, milky fresh mozzarella ball in water — 125g",         cat: "Pure Dairy",        img: "https://images.pexels.com/photos/821365/pexels-photo-821365.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Almond Milk 1L",       price: 240, desc: "Unsweetened creamy almond milk, 1 litre carton",            cat: "Pure Dairy",        img: "https://images.pexels.com/photos/1013420/pexels-photo-1013420.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Paneer 200g",          price: 160, desc: "Fresh, firm Indian cottage cheese — perfect for curries",   cat: "Pure Dairy",        img: "https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+
+          // 🥖 Fresh Bakery
+          { name: "Whole Wheat Bread",    price: 55,  desc: "Wholesome hearty whole wheat loaf baked fresh daily",       cat: "Fresh Bakery",      img: "https://images.pexels.com/photos/1775043/pexels-photo-1775043.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Butter Croissant",     price: 90,  desc: "Flaky, golden French butter croissant — freshly baked",     cat: "Fresh Bakery",      img: "https://images.pexels.com/photos/3847660/pexels-photo-3847660.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Chocolate Muffin",     price: 75,  desc: "Moist double chocolate chip muffin, baked from scratch",    cat: "Fresh Bakery",      img: "https://images.pexels.com/photos/3654064/pexels-photo-3654064.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "French Baguette",      price: 110, desc: "Traditional French baguette with a crisp golden crust",     cat: "Fresh Bakery",      img: "https://images.pexels.com/photos/209540/pexels-photo-209540.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Garlic Focaccia",      price: 140, desc: "Italian-style focaccia with rosemary and roasted garlic",   cat: "Fresh Bakery",      img: "https://images.pexels.com/photos/1775043/pexels-photo-1775043.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Cinnamon Danish",      price: 120, desc: "Flaky pastry swirl filled with sweet cinnamon and glaze",   cat: "Fresh Bakery",      img: "https://images.pexels.com/photos/3847660/pexels-photo-3847660.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Sourdough Loaf",       price: 180, desc: "Traditionally fermented sourdough with tangy open crumb",   cat: "Fresh Bakery",      img: "https://images.pexels.com/photos/1775043/pexels-photo-1775043.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Banana Walnut Cake",   price: 200, desc: "Moist banana loaf with crunchy walnuts, a bakery favourite",cat: "Fresh Bakery",      img: "https://images.pexels.com/photos/3654064/pexels-photo-3654064.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+
+          // 🥤 Healthy Beverages
+          { name: "Fresh Orange Juice",   price: 150, desc: "Cold-pressed 100% pure orange juice — no added sugar",      cat: "Healthy Beverages", img: "https://images.pexels.com/photos/96974/pexels-photo-96974.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Cold Brew Coffee",     price: 220, desc: "Smooth, low-acid cold brew concentrate — 500ml bottle",     cat: "Healthy Beverages", img: "https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Matcha Green Tea",     price: 280, desc: "Premium ceremonial-grade matcha — add hot water or milk",   cat: "Healthy Beverages", img: "https://images.pexels.com/photos/1417945/pexels-photo-1417945.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Sparkling Water 750ml",price: 45,  desc: "Refreshing sparkling mineral water — zero calories, 750ml", cat: "Healthy Beverages", img: "https://images.pexels.com/photos/1292862/pexels-photo-1292862.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Tender Coconut Water", price: 95,  desc: "Pure natural coconut water — nature's finest electrolyte",  cat: "Healthy Beverages", img: "https://images.pexels.com/photos/1030946/pexels-photo-1030946.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Detox Green Juice",    price: 210, desc: "Cold-pressed spinach, apple, ginger and cucumber blend",    cat: "Healthy Beverages", img: "https://images.pexels.com/photos/1346347/pexels-photo-1346347.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Apple Cider Vinegar",  price: 160, desc: "Raw, unfiltered ACV with the mother — 500ml bottle",        cat: "Healthy Beverages", img: "https://images.pexels.com/photos/96974/pexels-photo-96974.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" },
+          { name: "Peppermint Herbal Tea",price: 110, desc: "Refreshing organic peppermint tea bags — pack of 20",       cat: "Healthy Beverages", img: "https://images.pexels.com/photos/1417945/pexels-photo-1417945.jpeg?auto=compress&cs=tinysrgb&w=400&h=400" }
         ];
 
         for (const prod of products) {
-            const discount = Math.random() < 0.35 ? Math.floor(Math.random() * 31) + 20 : 0;
+            const discount = Math.random() < 0.4 ? Math.floor(Math.random() * 26) + 10 : 0;
             await pool.query(
                 "INSERT INTO products (name, description, price, discount, category_id, image_url) VALUES ($1, $2, $3, $4, $5, $6)",
-                [prod.name, `${prod.name} from organic farms`, prod.price, discount, categoryIds[prod.cat], `${prod.img}?auto=format&fit=crop&q=80&w=600`]
+                [prod.name, prod.desc, prod.price, discount, categoryIds[prod.cat], prod.img]
             );
         }
 

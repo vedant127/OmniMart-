@@ -7,6 +7,7 @@ import { useAuth } from "../store/AuthContext";
 
 const ProductCard = ({ product }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const { refreshCart } = useAuth();
 
   const handleAddToCart = async (e) => {
@@ -21,39 +22,27 @@ const ProductCard = ({ product }) => {
   };
 
   const formatPrice = (price) =>
-    new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(price);
+    new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 0,
+    }).format(price);
 
-  // High-quality organic image fallback helper
-  const getAccurateImage = (name = "", cat = "") => {
-    const combined = `${name} ${cat}`.toLowerCase();
-    
-    // Fruits & Healthy
-    if (combined.includes("fruit") || combined.includes("berry") || combined.includes("strawberry")) 
-      return "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&q=80&w=300";
-    if (combined.includes("apple") || combined.includes("pear")) 
-      return "https://images.unsplash.com/photo-1560806887-1e4cd0b6bcd6?auto=format&fit=crop&q=80&w=300";
-    if (combined.includes("banana") || combined.includes("tropical")) 
-      return "https://images.unsplash.com/photo-1571771894821-ad99026107b8?auto=format&fit=crop&q=80&w=300";
-    if (combined.includes("citrus") || combined.includes("orange") || combined.includes("lemon")) 
-      return "https://images.unsplash.com/photo-1557800636-894a64c1696f?auto=format&fit=crop&q=80&w=300";
-    
-    // Vegetables & Greens
-    if (combined.includes("vege") || combined.includes("broccoli") || combined.includes("green")) 
-      return "https://images.unsplash.com/photo-1566385101042-1a000c1268c4?auto=format&fit=crop&q=80&w=300";
-    if (combined.includes("tomato") || combined.includes("red")) 
-      return "https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&q=80&w=300";
-    if (combined.includes("grain") || combined.includes("nut") || combined.includes("seed")) 
-      return "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=300";
-    
-    // Dairy & Bakery
-    if (combined.includes("dairy") || combined.includes("milk") || combined.includes("cheese") || combined.includes("egg")) 
-      return "https://images.unsplash.com/photo-1550583724-1255818c053b?auto=format&fit=crop&q=80&w=300";
-    if (combined.includes("bake") || combined.includes("bread") || combined.includes("cake")) 
-      return "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=300";
-    if (combined.includes("beverage") || combined.includes("juice") || combined.includes("drink")) 
-      return "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&q=80&w=300";
+  const discount = parseFloat(product.discount) || 0;
+  const originalPrice = parseFloat(product.price) || 0;
+  const discountedPrice = discount > 0
+    ? Math.round(originalPrice * (1 - discount / 100))
+    : null;
 
-    return `https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=300`; // Default grocery shelf
+  // Category emoji map for fallback display
+  const getCategoryEmoji = (cat = "") => {
+    const c = cat.toLowerCase();
+    if (c.includes("fruit")) return "🍎";
+    if (c.includes("veg")) return "🥦";
+    if (c.includes("dairy")) return "🥛";
+    if (c.includes("bake") || c.includes("bakery")) return "🥖";
+    if (c.includes("bev") || c.includes("drink")) return "🥤";
+    return "🛒";
   };
 
   return (
@@ -61,64 +50,139 @@ const ProductCard = ({ product }) => {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="group relative rounded-[2rem] p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 border border-gray-100"
-      style={{ backgroundColor: "var(--card)", boxShadow: "var(--shadow-card)" }}
+      className="group relative rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl border border-gray-100 flex flex-col"
+      style={{ backgroundColor: "var(--card)" }}
     >
-      {/* Image with hover actions */}
-      <div 
-        className="relative overflow-hidden rounded-3xl mb-4 bg-muted/30 aspect-square flex items-center justify-center p-6"
+      {/* Discount Badge */}
+      {discount > 0 && (
+        <div
+          className="absolute top-3 left-3 z-10 text-white text-[11px] font-black px-2.5 py-1 rounded-full shadow-md"
+          style={{ backgroundColor: "var(--accent)" }}
+        >
+          {Math.round(discount)}% OFF
+        </div>
+      )}
+
+      {/* Wishlist */}
+      <button
+        className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center text-gray-400 hover:text-red-500 transition-all hover:scale-110"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Heart size={15} />
+      </button>
+
+      {/* Image Container — fixed square, clean background like Amazon */}
+      <div
+        className="relative w-full overflow-hidden flex items-center justify-center"
+        style={{ height: "200px", backgroundColor: "#f7f7f7" }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <img
-          src={product.image_url || getAccurateImage(product.name, product.category_name)}
-          alt={product.name}
-          className="w-full h-full object-contain mix-blend-multiply transition-transform duration-700 group-hover:scale-110"
-        />
-        
-        <div className={`absolute inset-0 bg-black/5 backdrop-blur-sm transition-all duration-300 flex items-center justify-center gap-3 ${isHovered ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-           <button className="p-3 rounded-full bg-white text-primary shadow-xl hover:bg-primary hover:text-white transition-all transform hover:scale-110 active:scale-95">
-            <Eye size={20} />
-          </button>
-          <button className="p-3 rounded-full bg-white text-accent shadow-xl hover:bg-accent hover:text-white transition-all transform hover:scale-110 active:scale-95">
-            <Heart size={20} />
+        {imgError ? (
+          <div className="flex flex-col items-center justify-center gap-2 opacity-60">
+            <span className="text-5xl">{getCategoryEmoji(product.category_name)}</span>
+            <span className="text-[10px] text-gray-400 font-medium">Image unavailable</span>
+          </div>
+        ) : (
+          <img
+            src={product.image_url}
+            alt={product.name}
+            onError={() => setImgError(true)}
+            className="transition-transform duration-500 group-hover:scale-110"
+            style={{
+              width: "160px",
+              height: "160px",
+              objectFit: "contain",
+              objectPosition: "center",
+            }}
+          />
+        )}
+
+        {/* Hover Quick-View Overlay */}
+        <div
+          className={`absolute inset-0 bg-black/10 backdrop-blur-[1px] flex items-center justify-center gap-3 transition-all duration-300 ${
+            isHovered ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+        >
+          <button className="p-2.5 rounded-full bg-white shadow-lg text-gray-600 hover:text-primary hover:scale-110 transition-all">
+            <Eye size={17} />
           </button>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="px-2 space-y-2">
-        <div className="flex items-center justify-between">
-          <span className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-            {product.category_name || 'Organic'}
-          </span>
-          <div className="flex items-center gap-1">
-            <Star size={10} className="text-yellow-400" fill="currentColor" />
-            <span className="text-[10px] font-bold">4.8</span>
-          </div>
-        </div>
+      {/* Product Info */}
+      <div className="p-4 flex flex-col gap-2 flex-1">
+        {/* Category Tag */}
+        <span
+          className="text-[10px] uppercase font-bold tracking-widest"
+          style={{ color: "var(--primary)", fontFamily: "'DM Sans', sans-serif" }}
+        >
+          {product.category_name || "Organic"}
+        </span>
 
-        <h3 className="text-sm font-bold truncate leading-tight" style={{ fontFamily: "'Playfair Display', serif", color: "var(--foreground)" }}>
+        {/* Product Name */}
+        <h3
+          className="text-sm font-bold leading-snug line-clamp-2"
+          style={{ fontFamily: "'Playfair Display', serif", color: "var(--foreground)", minHeight: "36px" }}
+        >
           {product.name}
         </h3>
 
-        <div className="flex items-baseline gap-2">
-          <span className="text-lg font-black" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-            {formatPrice(product.price)}
-          </span>
+        {/* Rating */}
+        <div className="flex items-center gap-1">
+          {[...Array(5)].map((_, i) => (
+            <Star
+              key={i}
+              size={11}
+              className={i < 4 ? "text-yellow-400" : "text-gray-200"}
+              fill="currentColor"
+            />
+          ))}
+          <span className="text-[10px] text-gray-400 ml-1 font-medium">(4.8)</span>
         </div>
 
+        {/* Price Block */}
+        <div className="flex items-baseline gap-2 mt-1">
+          <span
+            className="text-lg font-black"
+            style={{ fontFamily: "'DM Sans', sans-serif", color: "var(--foreground)" }}
+          >
+            {formatPrice(discountedPrice ?? originalPrice)}
+          </span>
+          {discountedPrice && (
+            <span
+              className="text-xs line-through"
+              style={{ color: "var(--muted-foreground)", fontFamily: "'DM Sans', sans-serif" }}
+            >
+              {formatPrice(originalPrice)}
+            </span>
+          )}
+        </div>
+
+        {/* Description snippet */}
+        {product.description && (
+          <p
+            className="text-[11px] leading-relaxed line-clamp-2"
+            style={{ color: "var(--muted-foreground)", fontFamily: "'DM Sans', sans-serif" }}
+          >
+            {product.description}
+          </p>
+        )}
+
+        {/* Add to Cart */}
         <button
           onClick={handleAddToCart}
-          className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-primary text-white text-xs font-bold uppercase tracking-widest transition-all hover:shadow-xl hover:shadow-primary/20 active:scale-[0.98] mt-2 group-hover:bg-primary/90"
+          className="mt-auto w-full flex items-center justify-center gap-2 py-3 rounded-xl text-white text-xs font-bold uppercase tracking-wider transition-all hover:opacity-90 hover:shadow-lg active:scale-[0.98]"
+          style={{
+            backgroundColor: "var(--primary)",
+            fontFamily: "'DM Sans', sans-serif",
+            marginTop: "auto",
+          }}
         >
           <ShoppingCart size={14} />
-          Purchase
+          Add to Cart
         </button>
       </div>
-
-      {/* Modern glass shine effect */}
-      <div className="absolute inset-0 rounded-[2rem] border border-white/40 pointer-events-none" />
     </motion.div>
   );
 };

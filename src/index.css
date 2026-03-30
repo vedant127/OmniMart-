@@ -17,8 +17,10 @@
   --card: #FFFFFF;
   --muted: #E4EEE0;
   --muted-foreground: #5A6E52;
-  --primary: #2C5F1E;
-  --primary-foreground: #FFFFFF;
+  --primary: #336B22;
+  --primary-foreground: rgba(255,255,255,0.92);
+  --footer-link: rgba(255,255,255,0.68);
+  --footer-heading: rgba(255,255,255,0.95);
   --accent: #C0392B;
   --accent-foreground: #FFFFFF;
   --border: #C8DCC0;

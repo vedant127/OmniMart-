@@ -98,12 +98,13 @@ const Categories = () => {
                     <img
                       src={(() => {
                           const name = (cat.name || "").toLowerCase();
-                          if (name.includes("fruit")) return "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&q=80&w=150";
-                          if (name.includes("veg")) return "https://images.unsplash.com/photo-1566385101042-1a000c1268c4?auto=format&fit=crop&q=80&w=150";
-                          if (name.includes("dairy") || name.includes("egg")) return "https://images.unsplash.com/photo-1550583724-1255818c053b?auto=format&fit=crop&q=80&w=150";
-                          if (name.includes("bread") || name.includes("bake")) return "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=150";
-                          if (name.includes("bev") || name.includes("drink")) return "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&q=80&w=150";
-                          return "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=150";
+                          // Pexels CDN — no rate limits, no API key needed
+                          if (name.includes("fruit")) return "https://images.pexels.com/photos/1132047/pexels-photo-1132047.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1";
+                          if (name.includes("veg"))   return "https://images.pexels.com/photos/1458694/pexels-photo-1458694.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1";
+                          if (name.includes("dairy")) return "https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1";
+                          if (name.includes("bak"))   return "https://images.pexels.com/photos/1775043/pexels-photo-1775043.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1";
+                          if (name.includes("bev"))   return "https://images.pexels.com/photos/96974/pexels-photo-96974.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1";
+                          return "https://images.pexels.com/photos/1132047/pexels-photo-1132047.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1";
                       })()}
                       alt={cat.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
