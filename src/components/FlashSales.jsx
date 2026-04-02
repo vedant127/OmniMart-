@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Heart, ShoppingCart, Star, ChevronLeft, ChevronRight } from "lucide-react";
+import { Heart, ShoppingCart, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
 import { getProducts, addToCart } from "../services/api";
@@ -8,7 +8,6 @@ import { useAuth } from "../store/AuthContext";
 const FlashSales = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [timeLeft, setTimeLeft] = useState({ days: 2, hours: 11, mins: 26, secs: 3 });
   const { refreshCart } = useAuth();
 
   useEffect(() => {
@@ -34,24 +33,7 @@ const FlashSales = () => {
     fetchFlashSales();
   }, []);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        let { days, hours, mins, secs } = prev;
-        secs--;
-        if (secs < 0) { secs = 59; mins--; }
-        if (mins < 0) { mins = 59; hours--; }
-        if (hours < 0) { hours = 23; days--; }
-        if (days < 0) return { days: 0, hours: 0, mins: 0, secs: 0 };
-        return { days, hours, mins, secs };
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const pad = (n) => n.toString().padStart(2, "0");
-
-  const handleAddToCart = async (product) => {
+const handleAddToCart = async (product) => {
     try {
       await addToCart({ productId: product.id, quantity: 1 });
       toast.success(`${product.name} added to cart! 🛒`);
@@ -64,45 +46,7 @@ const FlashSales = () => {
   return (
     <section className="py-12 lg:py-16">
       <div className="container mx-auto px-4">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-          <div className="flex items-center gap-4">
-            <h2 className="text-2xl md:text-3xl font-bold" style={{ fontFamily: "'Playfair Display', serif", color: "var(--foreground)" }}>
-              Flash sales
-            </h2>
-            <div className="flex items-center gap-3 text-sm font-semibold">
-              {[
-                { val: pad(timeLeft.hours), label: "Hours" },
-                { val: pad(timeLeft.mins), label: "Mins" },
-                { val: pad(timeLeft.secs), label: "Secs" },
-                { val: pad("57"), label: "Millis" },
-              ].map((t, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <div
-                    className="w-10 h-10 rounded flex items-center justify-center text-sm text-white font-bold"
-                    style={{ backgroundColor: "#2C5F1E" }}
-                  >
-                    {t.val}
-                  </div>
-                  {i < 3 && <span className="font-bold text-lg" style={{ color: "#1A1A1A" }}>:</span>}
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="flex gap-2">
-            {[ChevronLeft, ChevronRight].map((Icon, i) => (
-              <button
-                key={i}
-                className="h-10 w-10 rounded-full flex items-center justify-center bg-gray-50 text-gray-400 hover:bg-primary/10 hover:text-primary transition-all"
-                style={{ backgroundColor: "#F5F5F5" }}
-              >
-                <Icon className="h-5 w-5" />
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Product grid */}
+{/* Product grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {loading ? (
              Array.from({ length: 4 }).map((_, i) => (

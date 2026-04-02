@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster as HotToaster } from 'react-hot-toast';
 import { AuthProvider } from './store/AuthContext';
 import Navbar from './components/Navbar';
-import Footer from './components/Footer';
+
 import HomePage from './pages/HomePage';
 import ProductsPage from './pages/ProductsPage';
 import LoginPage from './pages/LoginPage';
@@ -74,7 +74,6 @@ function App() {
                     />
                   </Routes>
                 </main>
-                <Footer />
               </div>
             }
           />

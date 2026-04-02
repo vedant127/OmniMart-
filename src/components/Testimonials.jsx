@@ -18,7 +18,7 @@ const testimonials = [
 ];
 
 const Testimonials = () => (
-  <section className="py-12 lg:py-16">
+  <section className="py-12 lg:py-16" style={{ backgroundColor: "var(--background)" }}>
     <div className="container mx-auto px-4">
       <div className="flex items-center justify-between mb-8">
         <div>
@@ -39,7 +39,7 @@ const Testimonials = () => (
           {[ChevronLeft, ChevronRight].map((Icon, i) => (
             <button
               key={i}
-              className="h-9 w-9 rounded-full border flex items-center justify-center hover:bg-gray-50 transition"
+              className="h-9 w-9 rounded-full border flex items-center justify-center transition hover:bg-gray-50"
               style={{ borderColor: "var(--border)" }}
             >
               <Icon className="h-4 w-4" />

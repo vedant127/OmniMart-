@@ -113,10 +113,10 @@ const Footer = () => (
             Information
           </h4>
           <ul className="space-y-3 text-sm" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-            {["About Us", "Contact", "Privacy Policy", "Terms & Conditions", "Return Policy"].map((link) => (
+            {["Contact", "Privacy Policy", "Terms & Conditions", "Return Policy"].map((link) => (
               <li key={link}>
                 <Link
-                  to={link === "About Us" ? "/about" : link === "Contact" ? "/contact" : "#"}
+                  to={link === "Contact" ? "/contact" : "#"}
                   className="transition-colors hover:text-white"
                   style={{ color: "var(--footer-link)" }}
                 >
