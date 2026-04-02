@@ -1,22 +1,12 @@
 import { useState, useEffect } from "react";
-import { Search, ShoppingCart, Heart, User, Menu, X, Clock, MapPin, Globe, LogOut } from "lucide-react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Search, ShoppingCart, Menu, X } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../store/AuthContext";
-import { motion, AnimatePresence } from "framer-motion";
-
-const navLinks = [
-  { label: "Home", path: "/" },
-  { label: "Items", path: "/products" },
-  { label: "Offers", path: "/offers" },
-  { label: "Blogs", path: "/blog" },
-  { label: "Contact", path: "/contact" },
-];
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [scrolled, setScrolled] = useState(false);
-  const location = useLocation();
   const navigate = useNavigate();
   const { user, isLoggedIn, logout, cartCount } = useAuth();
 
@@ -35,132 +25,160 @@ const Navbar = () => {
   };
 
   return (
-    <header className={`w-full sticky top-0 z-50 transition-all duration-300 ${scrolled ? "shadow-lg scale-[0.99] translate-y-2 rounded-2xl mx-auto max-w-[98%]" : ""}`}>
-      {/* Top bar */}
+    <header
+      className={`w-full sticky top-0 z-50 transition-all duration-300 ${scrolled ? "shadow-md" : ""}`}
+      style={{
+        backgroundColor: "rgba(255,255,255,0.97)",
+        backdropFilter: "blur(10px)",
+        borderBottom: "1px solid #f0f0f0",
+      }}
+    >
+      {/* Added explicit pt-4 and inline paddingTop to guarantee it avoids browser top edge clipping */}
       <div 
-        className={`hidden md:block transition-all duration-300 overflow-hidden ${scrolled ? "h-0" : "h-10"}`}
-        style={{ backgroundColor: "var(--primary)", color: "var(--primary-foreground)" }}
+        className="w-full max-w-[1440px] mx-auto flex items-center justify-between px-4 sm:px-6 pb-4" 
+        style={{ paddingTop: '20px' }}
       >
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-2.5 text-[10px] uppercase font-bold tracking-widest" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-          <div className="flex items-center gap-6">
-            <span className="flex items-center gap-1.5">
-              <Clock size={12} className="opacity-80" />
-              Open: 10:00 AM - 11:00 PM
+
+        {/* Left Side: Menu + Logo */}
+        <div className="flex items-center gap-4 shrink-0">
+          <button className="hidden md:flex p-2 -ml-2 rounded-full hover:bg-gray-100 transition items-center justify-center">
+            <Menu className="h-6 w-6" style={{ color: "#242529" }} />
+          </button>
+          
+          <Link to="/" className="flex items-center gap-1 shrink-0 cursor-pointer">
+            <span className="text-3xl">🥕</span>
+            <span
+              className="text-[26px] font-black hidden sm:block tracking-tight"
+              style={{ fontFamily: "'DM Sans', sans-serif", color: "#108910", lineHeight: "1" }}
+            >
+              freshcart
             </span>
-            <span className="flex items-center gap-1.5">
-              <MapPin size={12} className="opacity-80" />
-              Mirpur-1 (main)
-            </span>
-          </div>
-          <div className="flex items-center gap-6">
-            <span className="flex items-center gap-1.5 cursor-pointer hover:opacity-80 transition">
-              <Globe size={12} className="opacity-80" />
-              English
-            </span>
-            {isLoggedIn ? (
-              <span className="font-bold flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-                Welcome, {user?.name?.split(" ")[0]}!
+          </Link>
+        </div>
+
+        {/* Search Bar — Big Instacart-style pill */}
+        <form
+          onSubmit={handleSearch}
+          className="flex-1 flex items-center gap-3 px-5 transition-all focus-within:ring-2 focus-within:bg-white mx-4 md:mx-8"
+          style={{
+            borderRadius: "32px",
+            backgroundColor: "#F3F4F6",
+            height: "52px",
+          }}
+        >
+          <Search className="h-5 w-5 shrink-0" style={{ color: "#242529", strokeWidth: 2.5 }} />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search products and stores"
+            className="bg-transparent text-[15px] font-medium outline-none w-full h-full"
+            style={{ color: "#242529", fontFamily: "'DM Sans', sans-serif", lineHeight: "normal" }}
+          />
+        </form>
+
+        {/* Right Side */}
+        <div className="flex items-center gap-2 shrink-0">
+
+          {/* Cart Icon */}
+          <Link to="/cart" className="relative p-2.5 rounded-full hover:bg-gray-100 transition">
+            <ShoppingCart className="h-5 w-5" style={{ color: "#242529" }} />
+            {cartCount > 0 && (
+              <span
+                className="absolute -top-1 -right-1 text-white text-[10px] font-black rounded-full h-5 w-5 flex items-center justify-center"
+                style={{ backgroundColor: "#108910" }}
+              >
+                {cartCount}
               </span>
-            ) : (
-              <Link to="/login" className="hover:text-accent transition-colors">Login / Register</Link>
             )}
-          </div>
+          </Link>
+
+          {/* Auth Buttons */}
+          {isLoggedIn ? (
+            <div className="hidden md:flex items-center gap-3 pl-2">
+              <span
+                className="text-[15px] font-bold"
+                style={{ color: "#242529", fontFamily: "'DM Sans', sans-serif" }}
+              >
+                Hi, {user?.name?.split(" ")[0]}
+              </span>
+              <button
+                onClick={logout}
+                className="px-6 py-[10px] text-[15px] font-bold rounded-full transition hover:bg-gray-100"
+                style={{ color: "#242529", fontFamily: "'DM Sans', sans-serif", backgroundColor: "#F3F4F6" }}
+              >
+                Log out
+              </button>
+            </div>
+          ) : (
+            <div className="hidden md:flex items-center gap-2 pl-2">
+              {/* Log in */}
+              <Link
+                to="/login"
+                className="px-5 py-3 text-[15px] font-bold rounded-full transition hover:bg-gray-100"
+                style={{ color: "#242529", fontFamily: "'DM Sans', sans-serif" }}
+              >
+                Log in
+              </Link>
+              {/* Sign up — solid Instacart green pill */}
+              <Link
+                to="/register"
+                className="px-6 py-3 text-[15px] font-bold rounded-full text-white transition hover:opacity-90 min-w-[max-content]"
+                style={{ backgroundColor: "#108910", fontFamily: "'DM Sans', sans-serif" }}
+              >
+                Sign up
+              </Link>
+            </div>
+          )}
+
+          {/* Mobile menu button */}
+          <button
+            className="md:hidden p-2 rounded-full hover:bg-gray-100 transition"
+            onClick={() => setMobileOpen(!mobileOpen)}
+          >
+            {mobileOpen
+              ? <X size={22} style={{ color: "#242529" }} />
+              : <Menu size={22} style={{ color: "#242529" }} />
+            }
+          </button>
         </div>
       </div>
 
-      {/* Main navbar */}
-      <nav 
-        className={`transition-all duration-300 ${scrolled ? "rounded-[2rem] border border-white/50" : "border-b border-gray-100"}`}
-        style={{ backgroundColor: "rgba(255, 255, 255, 0.95)", backdropFilter: "blur(10px)" }}
-      >
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
-          {/* Logo */}
-          <Link to="/" className="group flex items-center gap-2 shrink-0">
-             <div className="flex flex-row items-center gap-2">
-              <span className="text-3xl">🍎</span>
-              <span className="text-2xl font-black" style={{ fontFamily: "'Playfair Display', serif", color: "var(--foreground)" }}>
-                FreshCart
-              </span>
-            </div>
-          </Link>
-
-          {/* Desktop Nav Links */}
-          <ul className="hidden xl:flex items-center gap-10 text-[13px] font-bold">
-            {navLinks.map((link) => (
-              <li key={link.label}>
+      {/* Mobile dropdown */}
+      {mobileOpen && (
+        <div className="md:hidden px-6 pb-4 border-t border-gray-100 bg-white">
+          <div className="flex flex-col gap-3 pt-4">
+            {!isLoggedIn ? (
+              <>
                 <Link
-                  to={link.path}
-                  className="transition-all relative py-2 group"
-                  style={{
-                    color: location.pathname === link.path ? "var(--primary)" : "var(--foreground)",
-                    fontFamily: "'DM Sans', sans-serif",
-                  }}
+                  to="/login"
+                  onClick={() => setMobileOpen(false)}
+                  className="px-5 py-2.5 text-sm font-bold rounded-full border text-center transition hover:bg-gray-50"
+                  style={{ borderColor: "rgb(199,200,205)", color: "#242529" }}
                 >
-                  {link.label}
+                  Log in
                 </Link>
-              </li>
-            ))}
-          </ul>
-
-          {/* Icons */}
-          <div className="flex items-center gap-3">
-             <form 
-              onSubmit={handleSearch}
-              className="hidden lg:flex items-center rounded-2xl px-5 py-2.5 gap-3 w-64 transition-all border border-transparent focus-within:border-primary/20 focus-within:ring-4 focus-within:ring-primary/5 group bg-gray-50"
-            >
-              <Search className="h-4 w-4 text-gray-400 group-focus-within:text-primary transition-colors" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search..."
-                className="bg-transparent text-xs font-medium outline-none w-full"
-              />
-            </form>
-
-            <button className="relative p-2.5 rounded-xl hover:bg-primary/5 transition group">
-              <Heart className="h-5 w-5 text-foreground group-hover:text-accent transition-colors" />
-              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-accent border-2 border-white" />
-            </button>
-            <Link to="/cart" className="relative p-2.5 rounded-xl hover:bg-primary/5 transition group">
-              <ShoppingCart className="h-5 w-5 text-foreground group-hover:text-primary transition-colors" />
-              {cartCount > 0 && (
-                <span
-                  className="absolute -top-1.5 -right-1.5 text-white text-[10px] font-black rounded-full h-5 w-5 flex items-center justify-center shadow-lg"
-                  style={{ backgroundColor: "var(--accent)" }}
+                <Link
+                  to="/register"
+                  onClick={() => setMobileOpen(false)}
+                  className="px-5 py-2.5 text-sm font-bold rounded-full text-white text-center"
+                  style={{ backgroundColor: "#108910" }}
                 >
-                  {cartCount}
-                </span>
-              )}
-            </Link>
-            
-            <div className="h-8 w-[1px] bg-gray-100 mx-2 hidden lg:block" />
-
-            {isLoggedIn ? (
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={logout}
-                  className="p-2.5 rounded-xl hover:bg-accent/5 transition text-muted-foreground hover:text-accent"
-                >
-                  <LogOut className="h-5 w-5" />
-                </button>
-              </div>
+                  Sign up
+                </Link>
+              </>
             ) : (
-              <Link to="/login" className="p-2.5 rounded-xl bg-primary/10 transition hover:bg-primary hover:text-white">
-                <User className="h-5 w-5" />
-              </Link>
+              <button
+                onClick={() => { logout(); setMobileOpen(false); }}
+                className="px-5 py-2.5 text-sm font-bold rounded-full border text-center"
+                style={{ borderColor: "rgb(199,200,205)", color: "#242529" }}
+              >
+                Log out
+              </button>
             )}
-            
-            <button
-              className="xl:hidden p-2.5 rounded-xl bg-muted/50 transition hover:bg-primary/5"
-              onClick={() => setMobileOpen(!mobileOpen)}
-            >
-              {mobileOpen ? <X size={24} className="text-accent" /> : <Menu size={24} className="text-foreground" />}
-            </button>
           </div>
         </div>
-      </nav>
+      )}
     </header>
   );
 };

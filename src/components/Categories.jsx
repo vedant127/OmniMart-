@@ -32,6 +32,17 @@ const Categories = () => {
             count: cat.product_count ?? 0
           };
         });
+        
+        // Ensure there are always 6 categories for the grid layout by adding a special category if needed
+        if (data.length === 5) {
+          data.push({
+            id: 'special-category',
+            name: 'Special Offers',
+            count: 15,
+            emoji: '🎁'
+          });
+        }
+        
         setCategories(data);
       } catch (err) {
         console.error("Failed to fetch categories:", err);
@@ -43,21 +54,15 @@ const Categories = () => {
   }, []);
 
   return (
-    <section className="py-12 lg:py-16" style={{ backgroundColor: "rgba(228,238,224,0.5)" }}>
+    <section className="py-12 lg:py-16">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <span
-              className="text-xs font-semibold uppercase tracking-wider"
-              style={{ color: "var(--primary)", fontFamily: "'DM Sans', sans-serif" }}
-            >
-              🏷️ Top Categories
-            </span>
             <h2
-              className="text-2xl md:text-3xl font-bold mt-1"
-              style={{ fontFamily: "'Playfair Display', serif", color: "var(--foreground)" }}
+              className="text-2xl md:text-3xl font-bold"
+              style={{ fontFamily: "'DM Sans', sans-serif", color: "#242529" }}
             >
-              Our Specialty
+              Browse by category
             </h2>
           </div>
           <div className="flex gap-2">
@@ -90,7 +95,7 @@ const Categories = () => {
                 <Link
                   to={`/products?category=${encodeURIComponent(cat.name)}`}
                   className="block rounded-2xl p-6 flex flex-col items-center gap-3 cursor-pointer group hover:-translate-y-1 transition-all"
-                  style={{ backgroundColor: "var(--card)", boxShadow: "var(--shadow-card)" }}
+                  style={{ backgroundColor: "#ffffff", border: "1px solid #E8E9EB" }}
                 >
                   <div
                     className="h-20 w-20 rounded-full flex items-center justify-center overflow-hidden bg-white/50 border border-white"
@@ -104,6 +109,7 @@ const Categories = () => {
                           if (name.includes("dairy")) return "https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1";
                           if (name.includes("bak"))   return "https://images.pexels.com/photos/1775043/pexels-photo-1775043.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1";
                           if (name.includes("bev"))   return "https://images.pexels.com/photos/96974/pexels-photo-96974.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1";
+                          if (name.includes("special") || name.includes("offer")) return "https://images.pexels.com/photos/1640772/pexels-photo-1640772.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1";
                           return "https://images.pexels.com/photos/1132047/pexels-photo-1132047.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1";
                       })()}
                       alt={cat.name}
@@ -111,8 +117,8 @@ const Categories = () => {
                     />
                   </div>
                   <h3
-                    className="font-semibold text-sm truncate w-full text-center mt-1"
-                    style={{ fontFamily: "'Playfair Display', serif", color: "var(--foreground)" }}
+                    className="font-bold text-sm truncate w-full text-center mt-2"
+                    style={{ fontFamily: "'DM Sans', sans-serif", color: "#242529" }}
                   >
                     {cat.name}
                   </h3>

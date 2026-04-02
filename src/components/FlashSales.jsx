@@ -61,10 +61,10 @@ const handleAddToCart = async (product) => {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
                 className="rounded-2xl p-4 group transition-shadow"
-                style={{ backgroundColor: "var(--card)", boxShadow: "var(--shadow-card)" }}
+                style={{ backgroundColor: "#ffffff", border: "1px solid #E8E9EB" }}
               >
                 {/* Image area */}
-                <div className="relative rounded-xl p-6 mb-4 flex items-center justify-center h-48" style={{ backgroundColor: "var(--muted)" }}>
+                <div className="relative rounded-xl p-4 mb-4 flex items-center justify-center h-48 bg-white">
                   <span
                     className="absolute top-3 left-3 text-white text-[10px] font-bold px-2 py-1 rounded-full"
                     style={{ backgroundColor: "var(--accent)" }}
@@ -72,10 +72,10 @@ const handleAddToCart = async (product) => {
                     {product.discount}% off
                   </span>
                   <button
-                    className="absolute top-3 right-3 h-8 w-8 rounded-full flex items-center justify-center shadow-sm transition-colors"
-                    style={{ backgroundColor: "var(--card)" }}
+                    className="absolute top-0 right-0 h-8 w-8 rounded-full flex items-center justify-center shadow-sm transition-colors border border-gray-200"
+                    style={{ backgroundColor: "#ffffff" }}
                   >
-                    <Heart className="h-4 w-4" style={{ color: "var(--muted-foreground)" }} />
+                    <Heart className="h-4 w-4" style={{ color: "#242529" }} />
                   </button>
                   <img 
                     src={product.image_url || (() => {
@@ -106,7 +106,7 @@ const handleAddToCart = async (product) => {
                     {product.category_name}
                   </p>
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold truncate" style={{ fontFamily: "'Playfair Display', serif", color: "var(--foreground)" }}>
+                    <h3 className="font-bold truncate" style={{ fontFamily: "'DM Sans', sans-serif", color: "#242529" }}>
                       {product.name}
                     </h3>
                     <span className="text-xs shrink-0" style={{ color: "var(--muted-foreground)" }}>{product.weight}</span>
@@ -116,8 +116,8 @@ const handleAddToCart = async (product) => {
                     <span className="text-xs font-medium" style={{ fontFamily: "'DM Sans', sans-serif" }}>{product.rating}</span>
                   </div>
                   <div className="flex items-center gap-2 pt-1">
-                    <span className="font-bold" style={{ fontFamily: "'Playfair Display', serif", color: "var(--foreground)" }}>
-                      ₹{product.price}
+                    <span className="font-bold" style={{ fontFamily: "'DM Sans', sans-serif", color: "#242529" }}>
+                      ${(product.price * 0.012).toFixed(2)}
                     </span>
                     <span className="text-xs line-through" style={{ color: "var(--muted-foreground)" }}>
                       ₹{product.oldPrice}
@@ -125,11 +125,11 @@ const handleAddToCart = async (product) => {
                   </div>
                   <button
                     onClick={() => handleAddToCart(product)}
-                    className="w-full flex items-center justify-center gap-2 py-2 rounded-full text-sm font-semibold transition hover:opacity-90 mt-2"
-                    style={{ backgroundColor: "var(--primary)", color: "var(--primary-foreground)", fontFamily: "'DM Sans', sans-serif" }}
+                    className="w-full flex items-center justify-center gap-2 py-2 rounded-full text-sm font-bold transition hover:opacity-90 mt-2"
+                    style={{ backgroundColor: "#108910", color: "#ffffff", fontFamily: "'DM Sans', sans-serif" }}
                   >
-                    <ShoppingCart className="h-3.5 w-3.5" />
-                    Add to cart
+                    <ShoppingCart className="h-4 w-4" />
+                    Add
                   </button>
                 </div>
               </motion.div>

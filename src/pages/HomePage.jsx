@@ -18,7 +18,7 @@ const HomePage = () => (
     </motion.div>
 
     {/* Spacer to guarantee visual gap between Categories and Products */}
-    <div className="h-16 md:h-24"></div>
+    <div className="h-8 md:h-12"></div>
 
     <motion.div
       initial={{ opacity: 0, y: 30 }}
