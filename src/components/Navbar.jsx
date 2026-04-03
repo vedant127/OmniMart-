@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
 import { Search, ShoppingCart, Menu, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../store/AuthContext";
+import { useCart } from "../store/CartContext";
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
-  const { user, isLoggedIn, logout, cartCount } = useAuth();
+  const { cartItems, toggleCart } = useCart();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -16,169 +15,67 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchQuery("");
-    }
-  };
-
   return (
-    <header
-      className={`w-full sticky top-0 z-50 transition-all duration-300 ${scrolled ? "shadow-md" : ""}`}
-      style={{
-        backgroundColor: "rgba(255,255,255,0.97)",
-        backdropFilter: "blur(10px)",
-        borderBottom: "1px solid #f0f0f0",
-      }}
-    >
-      {/* Added explicit pt-4 and inline paddingTop to guarantee it avoids browser top edge clipping */}
-      <div 
-        className="w-full max-w-[1440px] mx-auto flex items-center justify-between px-4 sm:px-6 pb-4" 
-        style={{ paddingTop: '20px' }}
-      >
-
-        {/* Left Side: Menu + Logo */}
-        <div className="flex items-center gap-4 shrink-0">
-          <button className="hidden md:flex p-2 -ml-2 rounded-full hover:bg-gray-100 transition items-center justify-center">
-            <Menu className="h-6 w-6" style={{ color: "#242529" }} />
-          </button>
-          
-          <Link to="/" className="flex items-center gap-1 shrink-0 cursor-pointer">
-            <span className="text-3xl">🥕</span>
-            <span
-              className="text-[26px] font-black hidden sm:block tracking-tight"
-              style={{ fontFamily: "'DM Sans', sans-serif", color: "#108910", lineHeight: "1" }}
-            >
-              freshcart
+    <header className={`w-full sticky top-0 z-40 transition-all duration-300 bg-white ${scrolled ? "shadow-sm border-b border-gray-100" : "border-b border-gray-100"}`}>
+      <div className="container mx-auto px-4 max-w-[1440px]">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-2">
+            <span className="text-2xl">🥦</span>
+            <span className="text-[22px] font-bold tracking-tight text-gray-900 font-sans">
+              Grocery<span className="text-[#3cb065]">Mart</span>
             </span>
           </Link>
-        </div>
 
-        {/* Search Bar — Big Instacart-style pill */}
-        <form
-          onSubmit={handleSearch}
-          className="flex-1 flex items-center gap-3 px-5 transition-all focus-within:ring-2 focus-within:bg-white mx-4 md:mx-8"
-          style={{
-            borderRadius: "32px",
-            backgroundColor: "#F3F4F6",
-            height: "52px",
-          }}
-        >
-          <Search className="h-5 w-5 shrink-0" style={{ color: "#242529", strokeWidth: 2.5 }} />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search products and stores"
-            className="bg-transparent text-[15px] font-medium outline-none w-full h-full"
-            style={{ color: "#242529", fontFamily: "'DM Sans', sans-serif", lineHeight: "normal" }}
-          />
-        </form>
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex items-center gap-6 lg:gap-8 mx-auto font-sans">
+            <Link to="/" className="text-[14px] font-medium text-gray-600 hover:text-[#3cb065]">Home</Link>
+            <Link to="/shop" className="text-[14px] font-medium text-gray-600 hover:text-[#3cb065]">Shop</Link>
+            <Link to="/fruits-veggies" className="text-[14px] font-medium text-gray-600 hover:text-[#3cb065]">Fruits & Veggies</Link>
+            <Link to="/dairy" className="text-[14px] font-medium text-gray-600 hover:text-[#3cb065]">Dairy</Link>
+            <Link to="/beverages" className="text-[14px] font-medium text-gray-600 hover:text-[#3cb065]">Beverages</Link>
+          </nav>
 
-        {/* Right Side */}
-        <div className="flex items-center gap-2 shrink-0">
+          {/* Actions */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate('/shop')}
+              className="p-2 transition-colors cursor-pointer text-gray-600 hover:text-[#3cb065]"
+            >
+              <Search className="w-5 h-5" />
+            </button>
+            
+            <button
+              onClick={toggleCart}
+              className="relative p-2 transition-colors cursor-pointer text-gray-600 hover:text-[#3cb065]"
+            >
+              <ShoppingCart className="w-5 h-5" />
+              {cartItems.length > 0 && (
+                <span className="absolute 0 top-0 right-0 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center shadow-sm bg-[#3cb065]">
+                  {cartItems.reduce((acc, i) => acc + i.quantity, 0)}
+                </span>
+              )}
+            </button>
 
-          {/* Cart Icon */}
-          <Link to="/cart" className="relative p-2.5 rounded-full hover:bg-gray-100 transition">
-            <ShoppingCart className="h-5 w-5" style={{ color: "#242529" }} />
-            {cartCount > 0 && (
-              <span
-                className="absolute -top-1 -right-1 text-white text-[10px] font-black rounded-full h-5 w-5 flex items-center justify-center"
-                style={{ backgroundColor: "#108910" }}
-              >
-                {cartCount}
-              </span>
-            )}
-          </Link>
-
-          {/* Auth Buttons */}
-          {isLoggedIn ? (
-            <div className="hidden md:flex items-center gap-3 pl-2">
-              <span
-                className="text-[15px] font-bold"
-                style={{ color: "#242529", fontFamily: "'DM Sans', sans-serif" }}
-              >
-                Hi, {user?.name?.split(" ")[0]}
-              </span>
-              <button
-                onClick={logout}
-                className="px-6 py-[10px] text-[15px] font-bold rounded-full transition hover:bg-gray-100"
-                style={{ color: "#242529", fontFamily: "'DM Sans', sans-serif", backgroundColor: "#F3F4F6" }}
-              >
-                Log out
-              </button>
-            </div>
-          ) : (
-            <div className="hidden md:flex items-center gap-2 pl-2">
-              {/* Log in */}
-              <Link
-                to="/login"
-                className="px-5 py-3 text-[15px] font-bold rounded-full transition hover:bg-gray-100"
-                style={{ color: "#242529", fontFamily: "'DM Sans', sans-serif" }}
-              >
-                Log in
-              </Link>
-              {/* Sign up — solid Instacart green pill */}
-              <Link
-                to="/register"
-                className="px-6 py-3 text-[15px] font-bold rounded-full text-white transition hover:opacity-90 min-w-[max-content]"
-                style={{ backgroundColor: "#108910", fontFamily: "'DM Sans', sans-serif" }}
-              >
-                Sign up
-              </Link>
-            </div>
-          )}
-
-          {/* Mobile menu button */}
-          <button
-            className="md:hidden p-2 rounded-full hover:bg-gray-100 transition"
-            onClick={() => setMobileOpen(!mobileOpen)}
-          >
-            {mobileOpen
-              ? <X size={22} style={{ color: "#242529" }} />
-              : <Menu size={22} style={{ color: "#242529" }} />
-            }
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile dropdown */}
-      {mobileOpen && (
-        <div className="md:hidden px-6 pb-4 border-t border-gray-100 bg-white">
-          <div className="flex flex-col gap-3 pt-4">
-            {!isLoggedIn ? (
-              <>
-                <Link
-                  to="/login"
-                  onClick={() => setMobileOpen(false)}
-                  className="px-5 py-2.5 text-sm font-bold rounded-full border text-center transition hover:bg-gray-50"
-                  style={{ borderColor: "rgb(199,200,205)", color: "#242529" }}
-                >
-                  Log in
-                </Link>
-                <Link
-                  to="/register"
-                  onClick={() => setMobileOpen(false)}
-                  className="px-5 py-2.5 text-sm font-bold rounded-full text-white text-center"
-                  style={{ backgroundColor: "#108910" }}
-                >
-                  Sign up
-                </Link>
-              </>
-            ) : (
-              <button
-                onClick={() => { logout(); setMobileOpen(false); }}
-                className="px-5 py-2.5 text-sm font-bold rounded-full border text-center"
-                style={{ borderColor: "rgb(199,200,205)", color: "#242529" }}
-              >
-                Log out
-              </button>
-            )}
+            <button className="md:hidden p-2 text-gray-600 ml-1 transition-colors hover:text-[#3cb065]" onClick={() => setMobileOpen(!mobileOpen)}>
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
-      )}
+
+        {/* Mobile Menu */}
+        {mobileOpen && (
+          <nav className="md:hidden pb-4 border-t border-gray-100 pt-2 font-sans">
+            <div className="flex flex-col gap-1">
+              <Link to="/" onClick={() => setMobileOpen(false)} className="text-[15px] font-medium px-3 py-2 rounded-md text-gray-600 hover:text-[#3cb065] hover:bg-green-50">Home</Link>
+              <Link to="/shop" onClick={() => setMobileOpen(false)} className="text-[15px] font-medium px-3 py-2 rounded-md text-gray-600 hover:text-[#3cb065] hover:bg-green-50">Shop</Link>
+              <Link to="/fruits-veggies" onClick={() => setMobileOpen(false)} className="text-[15px] font-medium px-3 py-2 rounded-md text-gray-600 hover:text-[#3cb065] hover:bg-green-50">Fruits & Veggies</Link>
+              <Link to="/dairy" onClick={() => setMobileOpen(false)} className="text-[15px] font-medium px-3 py-2 rounded-md text-gray-600 hover:text-[#3cb065] hover:bg-green-50">Dairy</Link>
+              <Link to="/beverages" onClick={() => setMobileOpen(false)} className="text-[15px] font-medium px-3 py-2 rounded-md text-gray-600 hover:text-[#3cb065] hover:bg-green-50">Beverages</Link>
+            </div>
+          </nav>
+        )}
+      </div>
     </header>
   );
 };

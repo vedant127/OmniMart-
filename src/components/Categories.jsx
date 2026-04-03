@@ -1,143 +1,82 @@
-import { useState, useEffect } from "react";
+import { useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { getCategories } from "../services/api";
+import { categories } from "../data";
 
 const Categories = () => {
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const scrollRef = useRef(null);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await getCategories();
-        // Add default emojis since they might not be in the database
-        const data = (res.data || []).map((cat) => {
-          const name = cat.name.toLowerCase();
-          const emoji = (() => {
-            if (name.includes("tablet") || name.includes("ipad")) return "📱";
-            if (name.includes("electronic") || name.includes("tech")) return "🔌";
-            if (name.includes("fruit")) return "🍎";
-            if (name.includes("veg")) return "🥦";
-            if (name.includes("dairy")) return "🥛";
-            if (name.includes("beverage")) return "🍹";
-            if (name.includes("bake")) return "🥐";
-            return "📦";
-          })();
-          
-          return {
-            ...cat,
-            emoji: emoji,
-            count: cat.product_count ?? 0
-          };
-        });
-        
-        // Ensure there are always 6 categories for the grid layout by adding a special category if needed
-        if (data.length === 5) {
-          data.push({
-            id: 'special-category',
-            name: 'Special Offers',
-            count: 15,
-            emoji: '🎁'
-          });
-        }
-        
-        setCategories(data);
-      } catch (err) {
-        console.error("Failed to fetch categories:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCategories();
-  }, []);
+  const scrollLeft = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: -300, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+    }
+  };
 
   return (
-    <section className="py-12 lg:py-16">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2
-              className="text-2xl md:text-3xl font-bold"
-              style={{ fontFamily: "'DM Sans', sans-serif", color: "#242529" }}
-            >
-              Browse by category
+    <section className="py-12 lg:py-16 bg-white">
+      <div className="container mx-auto px-4 max-w-[1440px]">
+        {/* Header Row */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+          <div className="flex flex-col gap-2">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+              Shop by Category
             </h2>
+            <p className="text-[15px] text-gray-500" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+              Browse our 7 curated categories
+            </p>
           </div>
           <div className="flex gap-2">
-            {[ChevronLeft, ChevronRight].map((Icon, i) => (
-              <button
-                key={i}
-                className="h-9 w-9 rounded-full border flex items-center justify-center hover:bg-gray-50 transition"
-                style={{ borderColor: "var(--border)" }}
-              >
-                <Icon className="h-4 w-4" />
-              </button>
-            ))}
+            <button
+              onClick={scrollLeft}
+              className="h-10 w-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 hover:text-[#3cb065] transition-colors"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              onClick={scrollRight}
+              className="h-10 w-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 hover:text-[#3cb065] transition-colors"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-          {loading ? (
-             Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="h-48 rounded-2xl animate-pulse bg-white/50 border border-white" />
-            ))
-          ) : categories.length > 0 ? (
-            categories.map((cat, i) => (
-              <motion.div
-                key={cat.id || cat.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.07 }}
-              >
-                <Link
-                  to={`/products?category=${encodeURIComponent(cat.name)}`}
-                  className="block rounded-2xl p-6 flex flex-col items-center gap-3 cursor-pointer group hover:-translate-y-1 transition-all"
-                  style={{ backgroundColor: "#ffffff", border: "1px solid #E8E9EB" }}
-                >
-                  <div
-                    className="h-20 w-20 rounded-full flex items-center justify-center overflow-hidden bg-white/50 border border-white"
-                  >
-                    <img
-                      src={(() => {
-                          const name = (cat.name || "").toLowerCase();
-                          // Pexels CDN — no rate limits, no API key needed
-                          if (name.includes("fruit")) return "https://images.pexels.com/photos/1132047/pexels-photo-1132047.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1";
-                          if (name.includes("veg"))   return "https://images.pexels.com/photos/1458694/pexels-photo-1458694.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1";
-                          if (name.includes("dairy")) return "https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1";
-                          if (name.includes("bak"))   return "https://images.pexels.com/photos/1775043/pexels-photo-1775043.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1";
-                          if (name.includes("bev"))   return "https://images.pexels.com/photos/96974/pexels-photo-96974.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1";
-                          if (name.includes("special") || name.includes("offer")) return "https://images.pexels.com/photos/1640772/pexels-photo-1640772.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1";
-                          return "https://images.pexels.com/photos/1132047/pexels-photo-1132047.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=1";
-                      })()}
-                      alt={cat.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                  </div>
-                  <h3
-                    className="font-bold text-sm truncate w-full text-center mt-2"
-                    style={{ fontFamily: "'DM Sans', sans-serif", color: "#242529" }}
-                  >
-                    {cat.name}
-                  </h3>
-                  <p
-                    className="text-xs"
-                    style={{ color: "var(--muted-foreground)", fontFamily: "'DM Sans', sans-serif" }}
-                  >
-                    {cat.count} items
-                  </p>
-                </Link>
-              </motion.div>
-            ))
-          ) : (
-            <div className="col-span-full py-12 text-center rounded-2xl bg-white/50 border border-dashed border-primary/30">
-               <p className="text-sm font-bold opacity-70" style={{ color: "var(--primary)" }}>
-                 No categories in database. Please run: <code className="bg-primary/10 px-2 py-1 rounded">node src/db/migrate.js</code> to seed your products.
-               </p>
-            </div>
-          )}
+        {/* Scrollable Row */}
+        <div 
+          ref={scrollRef}
+          className="flex overflow-x-auto gap-4 md:gap-6 pb-4 snap-x hide-scrollbar" 
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {categories.map((cat, i) => (
+            <Link
+              key={cat.id || i}
+              to={`/shop?category=${encodeURIComponent(cat.name)}`}
+              className="relative shrink-0 w-40 sm:w-48 lg:w-56 h-48 sm:h-56 lg:h-64 rounded-2xl overflow-hidden group snap-start block shadow-sm hover:shadow-md transition-shadow"
+            >
+              <img
+                src={cat.image}
+                alt={cat.name}
+                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+              {/* Dark overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+              
+              <div className="absolute bottom-4 left-4 right-4">
+                <h3 className="font-bold text-white text-lg leading-tight mb-1" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                  {cat.name}
+                </h3>
+                <p className="text-[13px] text-white/90 font-medium tracking-wide">
+                  {cat.count} products
+                </p>
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
     </section>

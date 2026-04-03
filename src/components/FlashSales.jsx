@@ -1,147 +1,80 @@
-import { useState, useEffect } from "react";
-import { Heart, ShoppingCart, Star } from "lucide-react";
+import { useRef } from "react";
+import { Star } from "lucide-react";
 import { motion } from "framer-motion";
-import { toast } from "react-hot-toast";
-import { getProducts, addToCart } from "../services/api";
-import { useAuth } from "../store/AuthContext";
+import { Link } from "react-router-dom";
+import { products } from "../data";
 
 const FlashSales = () => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const { refreshCart } = useAuth();
-
-  useEffect(() => {
-    const fetchFlashSales = async () => {
-      try {
-        const res = await getProducts();
-        // Since we don't have a specific flash sale flag, we'll take a subset of products
-        // and add some mock flash sale data for the UI
-        const data = (res.data || []).slice(0, 4).map(p => ({
-          ...p,
-          oldPrice: Math.round(p.price * 1.3),
-          discount: 30,
-          rating: 4.8,
-          weight: "500 g"
-        }));
-        setProducts(data);
-      } catch (err) {
-        console.error("Failed to fetch products:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchFlashSales();
-  }, []);
-
-const handleAddToCart = async (product) => {
-    try {
-      await addToCart({ productId: product.id, quantity: 1 });
-      toast.success(`${product.name} added to cart! 🛒`);
-      refreshCart();
-    } catch {
-      toast.error("Please login to add to cart");
-    }
-  };
+  const scrollRef = useRef(null);
+  
+  // Featured products from data (Kiwi, Pineapple, Grapes, Oranges)
+  const featured = products.slice(0, 4);
 
   return (
-    <section className="py-12 lg:py-16">
-      <div className="container mx-auto px-4">
-{/* Product grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {loading ? (
-             Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-[2rem] h-80 animate-pulse border border-gray-100" />
-            ))
-          ) : products.length > 0 ? (
-            products.map((product, i) => (
-              <motion.div
-                key={product.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="rounded-2xl p-4 group transition-shadow"
-                style={{ backgroundColor: "#ffffff", border: "1px solid #E8E9EB" }}
+    <section className="container mx-auto px-4 max-w-[1440px] py-12">
+      <div className="flex flex-col gap-2 mb-8">
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+          Featured Products
+        </h2>
+        <p className="text-[15px] text-gray-500" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+          Handpicked deals and favorites
+        </p>
+      </div>
+
+      <div 
+        ref={scrollRef}
+        className="flex overflow-x-auto gap-4 md:gap-6 pb-4 snap-x hide-scrollbar"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
+        {featured.map((product, i) => (
+          <Link
+            key={product.id}
+            to={`/shop`}
+            className="shrink-0 w-64 md:w-72 bg-white rounded-xl overflow-hidden group transition-all duration-300 shadow-sm hover:shadow-md border border-gray-100 flex flex-col snap-start"
+          >
+            {/* Full-width Image area */}
+            <div className="relative w-full h-48 sm:h-56 bg-gray-50 overflow-hidden">
+              <span
+                className="absolute top-3 left-3 text-white text-[10px] font-bold px-2 py-0.5 rounded bg-red-500 z-10"
               >
-                {/* Image area */}
-                <div className="relative rounded-xl p-4 mb-4 flex items-center justify-center h-48 bg-white">
-                  <span
-                    className="absolute top-3 left-3 text-white text-[10px] font-bold px-2 py-1 rounded-full"
-                    style={{ backgroundColor: "var(--accent)" }}
-                  >
-                    {product.discount}% off
-                  </span>
-                  <button
-                    className="absolute top-0 right-0 h-8 w-8 rounded-full flex items-center justify-center shadow-sm transition-colors border border-gray-200"
-                    style={{ backgroundColor: "#ffffff" }}
-                  >
-                    <Heart className="h-4 w-4" style={{ color: "#242529" }} />
-                  </button>
-                  <img 
-                    src={product.image_url || (() => {
-                          const name = (product.name || "").toLowerCase();
-                          const cat = (product.category_name || "").toLowerCase();
-                          const combined = `${name} ${cat}`;
-                          if (combined.includes("fruit") || combined.includes("berry") || combined.includes("apple")) 
-                            return "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&q=80&w=300";
-                          if (combined.includes("veg") || combined.includes("broccoli") || combined.includes("salad")) 
-                            return "https://images.unsplash.com/photo-1566385101042-1a000c1268c4?auto=format&fit=crop&q=80&w=300";
-                          if (combined.includes("dairy") || combined.includes("milk") || combined.includes("egg")) 
-                            return "https://images.unsplash.com/photo-1550583724-1255818c053b?auto=format&fit=crop&q=80&w=300";
-                          if (combined.includes("bread") || combined.includes("bake") || combined.includes("cake")) 
-                            return "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=300";
-                          if (combined.includes("bev") || combined.includes("drink") || combined.includes("juice")) 
-                            return "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&q=80&w=300";
-
-                          return "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=300"; // Organic shelf
-                    })()} 
-                    alt={product.name}
-                    className="w-full h-40 object-contain group-hover:scale-110 transition-transform duration-500 drop-shadow-md"
-                  />
-                </div>
-
-                {/* Info */}
-                <div className="space-y-2">
-                  <p className="text-xs" style={{ color: "var(--muted-foreground)", fontFamily: "'DM Sans', sans-serif" }}>
-                    {product.category_name}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-bold truncate" style={{ fontFamily: "'DM Sans', sans-serif", color: "#242529" }}>
-                      {product.name}
-                    </h3>
-                    <span className="text-xs shrink-0" style={{ color: "var(--muted-foreground)" }}>{product.weight}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Star className="h-3 w-3" fill="var(--organic-olive)" style={{ color: "var(--organic-olive)" }} />
-                    <span className="text-xs font-medium" style={{ fontFamily: "'DM Sans', sans-serif" }}>{product.rating}</span>
-                  </div>
-                  <div className="flex items-center gap-2 pt-1">
-                    <span className="font-bold" style={{ fontFamily: "'DM Sans', sans-serif", color: "#242529" }}>
-                      ${(product.price * 0.012).toFixed(2)}
-                    </span>
-                    <span className="text-xs line-through" style={{ color: "var(--muted-foreground)" }}>
-                      ₹{product.oldPrice}
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => handleAddToCart(product)}
-                    className="w-full flex items-center justify-center gap-2 py-2 rounded-full text-sm font-bold transition hover:opacity-90 mt-2"
-                    style={{ backgroundColor: "#108910", color: "#ffffff", fontFamily: "'DM Sans', sans-serif" }}
-                  >
-                    <ShoppingCart className="h-4 w-4" />
-                    Add
-                  </button>
-                </div>
-              </motion.div>
-            ))
-          ) : (
-            <div className="col-span-full py-12 text-center rounded-2xl bg-gray-50 border border-dashed border-accent/30">
-               <p className="text-sm font-bold opacity-70" style={{ color: "var(--accent)" }}>
-                 No products found. Please run: <code className="bg-accent/10 px-2 py-1 rounded">node src/db/migrate.js</code> to recycle your data.
-               </p>
+                Sale
+              </span>
+              
+              <img 
+                src={product.image} 
+                alt={product.name}
+                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 mix-blend-multiply"
+              />
             </div>
-          )}
-        </div>
+
+            {/* Info */}
+            <div className="p-4 flex flex-col flex-1">
+              <p className="text-xs uppercase font-bold text-gray-400 mb-1 tracking-wider" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                {product.weight || "EACH"}
+              </p>
+              
+              <h3 className="font-bold text-base leading-tight mb-4 flex-1 text-gray-900 group-hover:text-[#3cb065] transition-colors" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                {product.name}
+              </h3>
+              
+              <div className="flex items-end justify-between mt-auto">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-lg text-[#3cb065]" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                    ₹{product.price}
+                  </span>
+                  <span className="text-sm line-through text-gray-400">
+                    ₹{product.originalPrice || Math.round(product.price * 1.2)}
+                  </span>
+                </div>
+                
+                <div className="flex items-center gap-1">
+                  <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                  <span className="text-xs font-bold text-gray-600 leading-none">{product.rating}</span>
+                </div>
+              </div>
+            </div>
+          </Link>
+        ))}
       </div>
     </section>
   );

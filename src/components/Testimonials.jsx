@@ -18,19 +18,19 @@ const testimonials = [
 ];
 
 const Testimonials = () => (
-  <section className="py-12 lg:py-16" style={{ backgroundColor: "var(--background)" }}>
-    <div className="container mx-auto px-4">
+  <section className="py-12 lg:py-16 bg-white">
+    <div className="container mx-auto px-4 max-w-[1440px]">
       <div className="flex items-center justify-between mb-8">
         <div>
           <span
-            className="text-xs font-semibold uppercase tracking-wider"
-            style={{ color: "var(--primary)", fontFamily: "'DM Sans', sans-serif" }}
+            className="text-xs font-semibold uppercase tracking-wider text-[#2d6a2d]"
+            style={{ fontFamily: "'DM Sans', sans-serif" }}
           >
             🌿 Note from our clients
           </span>
           <h2
-            className="text-2xl md:text-3xl font-bold mt-1"
-            style={{ fontFamily: "'Playfair Display', serif", color: "var(--foreground)" }}
+            className="text-2xl md:text-3xl font-bold mt-1 text-gray-900"
+            style={{ fontFamily: "'Playfair Display', serif" }}
           >
             How we're making a difference, naturally
           </h2>
@@ -56,30 +56,29 @@ const Testimonials = () => (
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.1 }}
-            className="rounded-2xl p-6"
-            style={{ backgroundColor: "var(--card)", boxShadow: "var(--shadow-card)" }}
+            className="rounded-2xl p-6 bg-white shadow-[0_2px_10px_rgb(0,0,0,0.06)] border border-gray-100"
           >
             <div className="flex gap-1 mb-3">
               {Array.from({ length: t.rating }).map((_, j) => (
-                <Star key={j} className="h-4 w-4" fill="var(--organic-olive)" style={{ color: "var(--organic-olive)" }} />
+                <Star key={j} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
               ))}
             </div>
             <p
-              className="text-sm leading-relaxed mb-4"
-              style={{ color: "var(--muted-foreground)", fontFamily: "'DM Sans', sans-serif" }}
+              className="text-sm leading-relaxed mb-4 text-gray-500"
+              style={{ fontFamily: "'DM Sans', sans-serif" }}
             >
               "{t.text}"
             </p>
             <div className="flex items-center gap-3">
               <div
-                className="h-10 w-10 rounded-full flex items-center justify-center text-white font-bold text-sm"
-                style={{ backgroundColor: "var(--primary)", fontFamily: "'Playfair Display', serif" }}
+                className="h-10 w-10 rounded-full flex items-center justify-center text-white font-bold text-sm bg-[#2d6a2d]"
+                style={{ fontFamily: "'Playfair Display', serif" }}
               >
                 {t.avatar}
               </div>
               <span
-                className="font-medium text-sm"
-                style={{ fontFamily: "'DM Sans', sans-serif", color: "var(--foreground)" }}
+                className="font-medium text-sm text-gray-900"
+                style={{ fontFamily: "'DM Sans', sans-serif" }}
               >
                 {t.name}
               </span>
@@ -90,13 +89,9 @@ const Testimonials = () => (
 
       <div className="flex justify-center mt-8">
         <Link
-          to="/products"
-          className="inline-flex items-center gap-2 px-8 py-3 rounded-full font-semibold text-sm transition hover:opacity-90"
-          style={{
-            backgroundColor: "var(--primary)",
-            color: "var(--primary-foreground)",
-            fontFamily: "'DM Sans', sans-serif",
-          }}
+          to="/shop"
+          className="inline-flex items-center gap-2 px-8 py-3 rounded-full font-semibold text-sm transition bg-[#2d6a2d] text-white hover:bg-[#245324] hover:shadow-md"
+          style={{ fontFamily: "'DM Sans', sans-serif" }}
         >
           View all testimonials <ArrowRight className="h-4 w-4" />
         </Link>

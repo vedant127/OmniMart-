@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, Lock, Ticket, Truck } from 'lucide-react';
+import { Trash2, Plus, Minus, ShoppingBag, ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getCart, createOrder, deleteCartItem, updateCartQuantity } from '../services/api';
 import { useAuth } from '../store/AuthContext';
-import { motion, AnimatePresence } from 'framer-motion';
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -31,8 +30,9 @@ const CartPage = () => {
   }, [isLoggedIn]);
 
   const total = cartItems.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
-  const delivery = total > 499 || total === 0 ? 0 : 49;
-  const formatPrice = (p) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(p);
+  const subtotalUSD = total * 0.012;
+  const shippingUSD = subtotalUSD >= 50 || subtotalUSD === 0 ? 0 : 4.99;
+  const grandTotalUSD = subtotalUSD + shippingUSD;
 
   const handleUpdateQuantity = async (id, newQty) => {
     if (newQty < 1) return;
